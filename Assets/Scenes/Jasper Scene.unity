@@ -645,8 +645,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcf4d9b581f0244bae6a508c068eefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carrot: {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
-  chopCarrot: {fileID: 11400000, guid: 81bed169d72dbf7409018d25664bcf80, type: 2}
+  inventory:
+  - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
+  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
+  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
+  currentStation: knife
+  selectedIngredientIndex: 0
+  canvas: {fileID: 1116354819}
+  cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
 --- !u!1 &1116354818
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,7 +749,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
