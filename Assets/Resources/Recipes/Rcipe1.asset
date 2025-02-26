@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55c4f55e6a04b1e4eab923cacdee73ce, type: 3}
   m_Name: Rcipe1
   m_EditorClassIdentifier: 
-  recipeName: 
-  ingredients: []
-  recipeImage: {fileID: 0}
+  name: RecipeName
+  ingredients:
+  - name: IngridientName
+    quantity: 2
+    icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  timeToCook: 5

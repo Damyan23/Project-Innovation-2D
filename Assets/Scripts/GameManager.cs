@@ -21,6 +21,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+            Debug.Log($"Accelerometer Supported: {SystemInfo.supportsAccelerometer}");
+    Debug.Log($"Gyroscope Supported: {SystemInfo.supportsGyroscope}");
+    } 
+
+    void Update()
+    {
+        // Check if accelerometer is available
+    }
+
     private void OnEnable()
     {
         dataBase = this?.GetComponent<RecipeDataBase>();

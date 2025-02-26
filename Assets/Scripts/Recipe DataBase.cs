@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RecipeDataBase : MonoBehaviour
 {
-    private List<Recipe> recipes = new List<Recipe>(); // Auto-populated list
+    [HideInInspector] public List<Recipe> recipes = new List<Recipe>(); // Auto-populated list
     private void Start()
     {
         LoadAllRecipes();
