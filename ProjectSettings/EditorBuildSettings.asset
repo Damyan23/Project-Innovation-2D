@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Damyan Scene.unity
+    path: Assets/Scenes/Phone Main Menu.unity
+    guid: fb6dbbbc39a30904f96a8e61fa0f02c3
+  - enabled: 1
+    path: Assets/Scenes/PC Scene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Phone Scene.unity
+    guid: 22c85c441a1eb684c9e8d13c73986fdc
   m_configObjects: {}
