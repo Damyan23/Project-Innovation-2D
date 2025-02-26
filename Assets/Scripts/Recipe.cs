@@ -10,11 +10,3 @@ public class Recipe : ScriptableObject
     public float timeToCook;
 }
 
-
-[System.Serializable]
-public class Ingredient
-{
-    public string name;
-    public int quantity;
-    public Sprite icon;
-}

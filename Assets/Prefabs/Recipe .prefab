@@ -326,8 +326,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -476,11 +476,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_Name
-      value: Ingrident
+      value: Ingredient
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSize
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSizeBase
@@ -489,6 +501,10 @@ PrefabInstance:
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_enableAutoSizing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 8764717728458232974, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_AnchorMax.y
@@ -501,6 +517,22 @@ PrefabInstance:
     - target: {fileID: 8764717728458232974, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_SizeDelta.y
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -602,11 +634,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_Name
-      value: Ingrident (1)
+      value: Ingredient 2
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSize
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSizeBase
@@ -615,6 +659,26 @@ PrefabInstance:
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_enableAutoSizing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -716,11 +780,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_Name
-      value: Ingrident (2)
+      value: Ingredient 3
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSize
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_fontSizeBase
@@ -729,6 +805,26 @@ PrefabInstance:
     - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
       propertyPath: m_enableAutoSizing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411629365728654325, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9103694614434188191, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
