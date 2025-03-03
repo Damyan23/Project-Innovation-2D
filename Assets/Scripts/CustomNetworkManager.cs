@@ -12,53 +12,45 @@ public class CustomNetworkManager : NetworkManager
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    new void OnDestroy()
+    void OnDisable()
     {
-        // Unsubscribe when the object is destroyed (prevents memory leaks)
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
-        Debug.Log("🖥️ Server started! Loading PC scene...");
         SceneManager.LoadScene(pcScene);
     }
 
     public override void OnClientConnect()
     {
-        base.OnClientConnect();
-
-        // Load client scene only for remote clients (not the host client)
         if (!NetworkServer.active) 
         {
-            Debug.Log("📱 Client connected! Loading Phone scene...");
             SceneManager.LoadScene(phoneScene);
+            NetworkClient.ready = true;
         }
+
+
+        base.OnClientConnect();
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Searching for disabled NetworkIdentity objects...");
+        RegisterDisabledNetworkObjects();
+    }
 
-        // Find all objects in the scene
-        NetworkIdentity[] allObjects = FindObjectsOfType<NetworkIdentity>(true); // true finds disabled objects
+    void RegisterDisabledNetworkObjects()
+    {
+        // Find all disabled NetworkIdentity objects
+        NetworkIdentity[] allObjects = FindObjectsOfType<NetworkIdentity>(true);
 
         foreach (NetworkIdentity netIdentity in allObjects)
         {
-            if (!netIdentity.gameObject.activeSelf) // Check if it's disabled
+            if (!netIdentity.gameObject.activeSelf) // If disabled
             {
-                Debug.Log($"✅ Enabling & Registering: {netIdentity.gameObject.name}");
-                netIdentity.gameObject.SetActive(true); // Enable the object
-            }
-
-            // Ensure the object is correctly registered in the scene
-            if (!netIdentity.isServer)
-            {
-                NetworkServer.Spawn(netIdentity.gameObject);
+                netIdentity.gameObject.SetActive(true); // Enable it
             }
         }
-
-        Debug.Log("All disabled NetworkIdentity objects have been registered.");
     }
 }

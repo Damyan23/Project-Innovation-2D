@@ -18,7 +18,5 @@ public class RecipeDataBase : MonoBehaviour
         {
             this.recipes.Add(recipe);
         }
-
-        Debug.Log($"Loaded {this.recipes.Count} recipes.");
     }
 }

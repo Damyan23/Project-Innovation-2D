@@ -11,7 +11,7 @@ public class PhoneInput : NetworkBehaviour
     private float lastKnifeMotionTime = 0f; // Prevents multiple detections
     private float knifeMotionCooldown = 0.3f; // Time between detections
 
-    [Command]
+    [Command(requiresAuthority = false)]
     void CmdSendInput(Vector2 touchPosition, Vector3 accelerometer, Vector3 gyroRotation, Vector3 magnetometer, NetworkConnectionToClient sender = null)
     {
         if (accelerometer != lastServerAccel)
@@ -28,43 +28,45 @@ public class PhoneInput : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        Debug.Log("📱 Client started!");
-
-        // Enable sensors
-        Input.gyro.enabled = true;
-        Input.compass.enabled = true;
+        
+        // Only call CmdRequestAuthority if this is the local player
+        if (isLocalPlayer)
+        {
+            // Wait a frame to ensure network state is initialized
+            StartCoroutine(RequestAuthorityDelayed());
+        }
+    }
+    
+    private System.Collections.IEnumerator RequestAuthorityDelayed()
+    {
+        yield return null; // Wait a frame
+        
+        CmdRequestAuthority(connectionToClient);
+    }
+    
+    [Command(requiresAuthority = false)]
+    public void CmdRequestAuthority(NetworkConnectionToClient conn = null)
+    {
+        // Make sure we don't already have authority
+        if (conn != connectionToClient)
+        {
+            Debug.Log($"Granting authority to {conn.connectionId} for {gameObject.name}");
+            netIdentity.AssignClientAuthority(conn);
+        }
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
-        Debug.Log("🖥️ Server started!");
     }
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        Debug.Log("🎮 Local player started - we have authority!");
-    }
-
-    void Start()
-    {
-        if (Application.platform == RuntimePlatform.WindowsPlayer || 
-            Application.platform == RuntimePlatform.WindowsEditor)
-        {
-            Debug.Log("🔗 Starting Host on Windows...");
-            NetworkManager.singleton.StartHost();
-        }
-        else // Assume mobile platform
-        {
-            Debug.Log($"📱 Starting Client on mobile device. Connecting to: {NetworkManager.singleton.networkAddress}");
-            NetworkManager.singleton.StartClient();
-        }
     }
 
     void Update()
     {
-        // Prevent the server from running this part
         if (isServer || !NetworkClient.active || !NetworkClient.isConnected)
         {
             return;
@@ -75,22 +77,21 @@ public class PhoneInput : NetworkBehaviour
         Vector3 gyroRotation = Input.gyro.rotationRate;
         Vector3 magnetometer = Input.compass.rawVector;
 
-        // // Debug log only on client
-        // Debug.Log($"📱 [CLIENT] Sensor Data:\n" +
+        Vector2 touchPos = Vector2.zero;
+        CmdSendInput(touchPos, accelerometer, gyroRotation, magnetometer);
+
+        DebugData ();
+
+        DetectKnifeMotion ();
+    }
+
+    void DebugData ()
+    {
+        // Debug log only on client
+        // Debug.Log($"[CLIENT] Sensor Data:\n" +
         //           $"Accelerometer: {accelerometer}\n" +
         //           $"Gyroscope: {gyroRotation}\n" +
         //           $"Magnetometer: {magnetometer}");
-
-        Vector2 touchPos = Vector2.zero;
-        // Send data to server on touch or click
-        if (Input.touchCount > 0)
-        {
-            touchPos = Input.touchCount > 0 ? Input.GetTouch(0).position : (Vector2)Input.mousePosition;
-            Debug.Log($"📤 Sending input to server: {touchPos}");
-        }
-        CmdSendInput(touchPos, accelerometer, gyroRotation, magnetometer);
-
-        DetectKnifeMotion ();
     }
 
     void DetectKnifeMotion()
@@ -102,18 +103,18 @@ public class PhoneInput : NetworkBehaviour
         Vector3 gyroRotation = Input.gyro.rotationRate;
         Vector3 gravity = Input.gyro.gravity; // Used to detect orientation
 
-        // ✅ Step 1: Detect if the phone is sideways (thin side up)
+        //Detect if the phone is sideways (thin side up)
         bool isSideways = Mathf.Abs(gravity.x) > 0.7f; // If x is large, phone is on its sidex > 0.7
 
-        // ✅ Step 3: Detect proper up/down motion (instead of side-to-side)
+        //Detect proper up/down motion (instead of side-to-side)
         bool isFastDownward = acceleration.z < -0.6f; // Moving down when sideways
         bool isFastUpward = acceleration.z > 0.6f;    // Moving up when sideways
-        bool isRotatingFast = Mathf.Abs(gyroRotation.y) > 1.8f; // Rotating along correct axis
+        bool isRotatingFast = Mathf.Abs(gyroRotation.y) > 1.6f; // Rotating along correct axis
 
-        // ✅ Step 4: Detect knife motion ONLY when phone is sideways & power button is up
+        //Detect knife motion ONLY when phone is sideways & power button is up
         if (isSideways && (isFastDownward || isFastUpward) && isRotatingFast)
         {
-            Debug.Log("🔪 Knife Motion Detected!");
+            Debug.Log("Knife Motion Detected!");
             lastKnifeMotionTime = Time.time; // Update cooldown timer
         }
 

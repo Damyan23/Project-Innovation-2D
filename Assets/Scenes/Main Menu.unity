@@ -1115,7 +1115,7 @@ GameObject:
   - component: {fileID: 867841837}
   - component: {fileID: 867841836}
   - component: {fileID: 867841835}
-  - component: {fileID: 867841834}
+  - component: {fileID: 867841838}
   m_Layer: 0
   m_Name: NetworkMananger
   m_TagString: Untagged
@@ -1123,20 +1123,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &867841834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 867841833}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetX: 0
-  offsetY: 0
 --- !u!114 &867841835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1166,7 +1152,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 7261392340092861624, guid: 19566d9dd83a7fd4fa3c6537742afefe, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6500725415024056504, guid: e43f7b1b8a0286d4b9a7375702c83d2c, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -1228,6 +1215,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &867841838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867841833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dceb9a7085758fd4590419ff5b14b636, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &910908240
 GameObject:
   m_ObjectHideFlags: 0

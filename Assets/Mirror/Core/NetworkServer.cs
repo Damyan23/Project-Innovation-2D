@@ -113,6 +113,8 @@ namespace Mirror
         public static Action<NetworkConnectionToClient, TransportError, string> OnErrorEvent;
         public static Action<NetworkConnectionToClient, Exception> OnTransportExceptionEvent;
 
+        public static Action OnClientStarted;
+
         // keep track of actual achieved tick rate.
         // might become lower under heavy load.
         // very useful for profiling etc.
@@ -1254,7 +1256,7 @@ namespace Mirror
 
             // set ready
             conn.isReady = true;
-
+            OnClientStarted?.Invoke ();
             // client is ready to start spawning objects
             if (conn.identity != null)
                 SpawnObserversForConnection(conn);

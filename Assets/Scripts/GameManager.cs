@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public RecipeDataBase dataBase;
     [HideInInspector] public EventManager eventManager;
-
     private void Awake()
     {
         if (instance == null)
@@ -20,12 +19,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    void Start()
-    {
-            Debug.Log($"Accelerometer Supported: {SystemInfo.supportsAccelerometer}");
-    Debug.Log($"Gyroscope Supported: {SystemInfo.supportsGyroscope}");
-    } 
 
     void Update()
     {

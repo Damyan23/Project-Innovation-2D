@@ -1,33 +1,25 @@
 using UnityEngine;
 using Mirror;
-using UnityEngine.UI;
 
 public class NetworkEventManager : NetworkBehaviour
 {
+    // Define a delegate for handling button events
+    public delegate void ButtonEventHandler(string buttonFunc);
+    public static event ButtonEventHandler OnButtonPressed;
 
-    // Client calls this when button is clicked
-    public void SendEventToServer()
+    public void SendEventToServer(string buttonFunc)
     {
-        if (!isServer)
-        {
-            Debug.Log("[CLIENT] Sending event to server...");
-            CmdTriggerEvent("Button Clicked!"); 
-        }
+        Debug.Log($"[CLIENT] Sending event to server: {buttonFunc}");
+        CmdTriggerEvent(buttonFunc);
     }
 
     // Command: Runs only on the Server
-    [Command]
-    void CmdTriggerEvent(string eventMessage, NetworkConnectionToClient sender = null)
+    [Command(requiresAuthority = false)]
+    void CmdTriggerEvent(string buttonFunc, NetworkConnectionToClient sender = null)
     {
-        Debug.Log($"📡 [SERVER] Event received from Client {sender.connectionId}: {eventMessage}");
-        
-        // Call a function on the server (e.g., spawn an object)
-        ServerHandleEvent();
-    }
+        Debug.Log($"[SERVER] Received event: {buttonFunc}");
 
-    // This function only runs on the server
-    void ServerHandleEvent()
-    {
-        Debug.Log("🖥️ [SERVER] Handling event (e.g., spawning an object)...");
+        // Broadcast the event to all listeners
+        OnButtonPressed?.Invoke(buttonFunc);
     }
 }
