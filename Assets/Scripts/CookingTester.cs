@@ -1,31 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using TMPro;
 using UnityEngine.UI;
-using UnityEditor.Timeline.Actions;
-
 
 public class CookingTester : MonoBehaviour
 {
+    [Header("Debug Stuff")]
+    public List<Ingredient> startingInventory;
     public List<Ingredient> inventory;
-    
+    public List<Ingredient> selectedIngredients;
     public string currentStation = "knife";
 
-    public int selectedIngredientIndex = 0;
-    //public CookingStep chopCarrot;
-
-
-    public Transform canvas;
+    [Header("Prefabs")]
     public GameObject cookingStepPrefab;
+    public GameObject inventoryItemPrefab;
 
-    Dictionary<CookingStep, GameObject> cookingStepObjects;
+    [Header("References")]
+    public Transform canvas;
+    public Transform inventoryParent;
+
+    List<GameObject> inventoryItems;
+
 
     void Start()
     {
-        cookingStepObjects = new();    
-        DisplayAvailableCookingSteps();
+        inventoryItems = new();
+        selectedIngredients = new();
+        DisplayInventory();
     }
 
 
@@ -34,40 +36,27 @@ public class CookingTester : MonoBehaviour
         //Execute a cooking step (if possible)
         if (Input.GetKeyDown(KeyCode.F))
         {
-            List<CookingStep> available = GetAvailableSteps(inventory, currentStation);
-            if(available.Count > 0 && selectedIngredientIndex >= 0 && selectedIngredientIndex < available.Count)
-            {
-                available[selectedIngredientIndex].ProcessCookingStep(ref inventory, currentStation);
-                if (selectedIngredientIndex == available.Count - 1) selectedIngredientIndex--;
-            }
-            DisplayAvailableCookingSteps();
-        }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            selectedIngredientIndex--;
-            if (selectedIngredientIndex < 0) selectedIngredientIndex = 0;
-            DisplayAvailableCookingSteps();
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            int stepsAmount = GetAvailableSteps(inventory, currentStation).Count;
-            selectedIngredientIndex++;
-            if (selectedIngredientIndex >= stepsAmount) selectedIngredientIndex = stepsAmount - 1;
-            DisplayAvailableCookingSteps();
-        }
-
-        //Debug available steps to take
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            List<CookingStep> available = GetAvailableSteps(inventory, currentStation);
-
-            Debug.Log("Available steps at this station: ");
-
+            List<CookingStep> available = GetAvailableSteps(selectedIngredients, currentStation);
+            
             foreach(CookingStep step in available)
             {
-                Debug.Log(step.output);
+                if(IsValidRecipe(selectedIngredients, step))
+                {
+                    step.ProcessCookingStep(this, currentStation);
+                    selectedIngredients.Clear();
+                    return;
+                }
             }
+
+            Debug.LogWarning("Nothing Processed");
+
+            foreach(Ingredient ingredient in selectedIngredients)
+            {
+                AddIngredient(ingredient);
+            }
+
+            selectedIngredients.Clear();
+           
         }
     }
 
@@ -101,40 +90,65 @@ public class CookingTester : MonoBehaviour
         return true;
     }
 
-    void DisplayAvailableCookingSteps()
+    void DisplayInventory()
+    { 
+
+        foreach(Ingredient ingredient in startingInventory)
+        {
+            AddIngredient(ingredient);
+        }        
+    }
+
+    public void AddIngredient(Ingredient ingredient)
     {
-        foreach(GameObject obj in cookingStepObjects.Values)
+        GameObject inventoryItem = Instantiate(inventoryItemPrefab, inventoryParent);
+        inventoryItem.GetComponent<Image>().sprite = ingredient.icon;
+        inventoryItem.GetComponent<InventoryItem>().ingredient = ingredient;
+        inventoryItem.GetComponent<InventoryItem>().testerScript = this;
+        inventoryItems.Add(inventoryItem);
+        inventory.Add(ingredient);
+    }
+
+    public void RemoveIngredient(Ingredient ingredient)
+    {
+        inventory.Remove(ingredient);
+
+        foreach(GameObject item in inventoryItems)
         {
-            Destroy(obj);
+            if(item.GetComponent<InventoryItem>().ingredient == ingredient)
+            {
+                inventoryItems.Remove(item);
+                Destroy(item);
+                return;
+            }
         }
+    }
 
-        cookingStepObjects.Clear();
+    public void SelectInventoryItem(InventoryItem item)
+    {
+        RemoveIngredient(item.ingredient);
+        selectedIngredients.Add(item.ingredient);
+    }
 
-        List<CookingStep> available = GetAvailableSteps(inventory, currentStation);
 
-        float yOffset = 0;
-
-        foreach (CookingStep step in available) 
+    //Dont look at this function tbh
+    bool IsValidRecipe(List<Ingredient> ingredients, CookingStep step)
+    {
+        if (ingredients.Count == step.inputIngredients.Count)
         {
-            GameObject stepObject = Instantiate(cookingStepPrefab, canvas);
-            stepObject.transform.position = new Vector3(stepObject.transform.position.x, stepObject.transform.position.y + yOffset, 0);
-
-            TMP_Text ingredientNameText = stepObject.transform.Find("Ingredient Name").GetComponent<TMP_Text>();
-            ingredientNameText.text = step.inputIngredients[0].ingredientName;
-            if(available.Count == 1 || step == available[selectedIngredientIndex])
+            for(int i = 0; i < ingredients.Count; i++)
             {
-                ingredientNameText.color = Color.white;
-            }
-            else
-            {
-                ingredientNameText.color = Color.gray;
+                if (ingredients[i].name != step.inputIngredients[i].name)
+                {
+                    return false;
+                }
             }
 
-            Image ingredientImage = stepObject.GetComponentInChildren<Image>();
-            ingredientImage.sprite = step.inputIngredients[0].icon;
-
-            cookingStepObjects.Add(step, stepObject);
-            yOffset -= 100;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
