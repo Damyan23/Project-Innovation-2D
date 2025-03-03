@@ -791,13 +791,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcf4d9b581f0244bae6a508c068eefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory:
+  startingInventory:
   - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
+  inventory: []
+  selectedIngredients: []
   currentStation: knife
-  selectedInventoryItem: {fileID: 0}
-  selectedIngredients: {fileID: 0}
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
   inventoryItemPrefab: {fileID: 934398016370705773, guid: 2b626f79e075df547a75598c3922d859, type: 3}
   canvas: {fileID: 1116354819}
