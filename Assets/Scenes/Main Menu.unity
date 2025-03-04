@@ -1169,8 +1169,8 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  pcScene: PC Scene
-  phoneScene: Phone Scene
+  pcScene: Pc Scene
+  phoneScene: Damyan Scene
 --- !u!114 &867841836
 MonoBehaviour:
   m_ObjectHideFlags: 0

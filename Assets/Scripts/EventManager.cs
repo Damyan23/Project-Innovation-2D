@@ -3,9 +3,25 @@ using System;
 using System.Collections.Generic;
 public class EventManager : MonoBehaviour
 {
-    public static Action OnButtonUpEvent;
-    public static Action OnButtonDownEvent;
+    public Action OnButtonUpEvent;
+    public Action OnButtonDownEvent;
+    public Action startGameEvent;
 
+    void OnEnable()
+    {
+        startGameEvent += startGame;
+    }
+
+    void OnDisable()
+    {
+        startGameEvent -= startGame;
+    }
+
+    public void startGame ()
+    {
+        startGameEvent.Invoke ();
+        GameManager.instance.playerStartedGame = true;
+    }
     public void OnButtonUp ()
     {
         OnButtonUpEvent.Invoke ();

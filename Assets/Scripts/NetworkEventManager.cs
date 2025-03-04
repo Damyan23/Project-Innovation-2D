@@ -22,4 +22,10 @@ public class NetworkEventManager : NetworkBehaviour
         // Broadcast the event to all listeners
         OnButtonPressed?.Invoke(buttonFunc);
     }
+
+    [Command(requiresAuthority = false)]
+    public void StartGame ()
+    {
+        GameManager.instance.playerStartedGame = true;
+    }
 }
