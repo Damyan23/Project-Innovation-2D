@@ -5,7 +5,7 @@ public class InventoryItem : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public CookingTester testerScript;
+    public CookingManager manager;
     public Ingredient ingredient;
 
     void Start()
@@ -21,6 +21,6 @@ public class InventoryItem : MonoBehaviour
 
     public void OnClick()
     {
-        testerScript.SelectInventoryItem(this);
+        manager.SelectInventoryItem(this);
     }
 }

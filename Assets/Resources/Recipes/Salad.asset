@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55c4f55e6a04b1e4eab923cacdee73ce, type: 3}
-  m_Name: Recipe1
+  m_Name: Salad
   m_EditorClassIdentifier: 
-  name: RecipeName
+  name: Salad or whatever
   ingredients:
   - {fileID: 11400000, guid: 6fa75486a0a3e4c46ac65cbdae899c10, type: 2}
+  - {fileID: 11400000, guid: 69a7dbe0c640c3047a6c23eee22656f7, type: 2}
   icon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
   timeToCook: 5
+  station: plating
+  output: {fileID: 11400000, guid: 5456721563fcbbe45a28a034dcf027af, type: 2}

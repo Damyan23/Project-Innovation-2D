@@ -10,7 +10,7 @@ public class CookingStep : ScriptableObject
 
     public string requiredStation;
 
-    public void ProcessCookingStep(CookingTester testScript, string currentStation)
+    public void ProcessCookingStep(CookingManager testScript, string currentStation)
     {
         if (currentStation != requiredStation) 
         { 
@@ -20,7 +20,7 @@ public class CookingStep : ScriptableObject
 
         foreach (var ingredient in inputIngredients)
         {
-            if (!testScript.selectedIngredients.Contains(ingredient))
+            if (!testScript.selectedIngredients[currentStation].Contains(ingredient))
             {
                 Debug.LogWarning("Don't have required ingredients!");
                 return;
@@ -28,7 +28,7 @@ public class CookingStep : ScriptableObject
         }
 
         //All ingredients are in inventory
-        testScript.selectedIngredients.Clear();
+        testScript.selectedIngredients[currentStation].Clear();
 
         testScript.AddIngredient(output);
 
