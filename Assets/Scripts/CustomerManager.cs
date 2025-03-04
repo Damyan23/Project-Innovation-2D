@@ -8,7 +8,6 @@ public class CustomerMnager : MonoBehaviour
 {
     private RecipeDataBase dataBase;
     private List<Recipe> recipes = new List<Recipe>();
-    private List<Recipe> currentRecipes = new List<Recipe>();
 
     // Prefabs to instantiate
     public GameObject recipePrefab;  // The prefab for the whole recipe
@@ -32,7 +31,7 @@ public class CustomerMnager : MonoBehaviour
 
     public void AddRandomRecipe()
     {
-        if (recipes.Count > 0 && currentRecipes.Count < 1)
+        if (recipes.Count > 0 && dataBase.wantedDishes.Count < 1)
         {
             // Get a random index
             int randomIndex = Random.Range(0, recipes.Count);
@@ -40,9 +39,9 @@ public class CustomerMnager : MonoBehaviour
 
             // Display the recipe
             DisplayRecipe(randomRecipe);
-            currentRecipes.Add (randomRecipe);
+            dataBase.wantedDishes.Add(randomRecipe.output);
 
-            Debug.Log($"Added {randomRecipe.name} to current recipes.");
+            //Debug.Log($"Added {randomRecipe.name} to current recipes.");
         }
         else
         {
@@ -55,6 +54,7 @@ public class CustomerMnager : MonoBehaviour
     {
         // Instantiate the recipe prefab
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
+
 
         // Set the recipe name (TMP Text) and the timer
         Transform topPart = recipeObject.transform.Find("Top");
@@ -81,11 +81,5 @@ public class CustomerMnager : MonoBehaviour
 
         Image ingredientIcon = ingredientObject.GetComponentInChildren<Image>();
         ingredientIcon.sprite = ingredient.icon;
-
-        TMP_Text ingredientNameText = ingredientObject.transform.Find("IngredientName").GetComponentInChildren<TMP_Text>();
-        TMP_Text ingredientQuantityText = ingredientObject.transform.Find("QuantityText").GetComponent<TMP_Text>();
-
-        ingredientNameText.text = ingredient.ingredientName;
-        ingredientQuantityText.text = ingredient.quantity.ToString();
     }
 }

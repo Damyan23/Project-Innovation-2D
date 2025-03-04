@@ -723,6 +723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recipes: []
+  wantedDishes: []
 --- !u!114 &1010039767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -771,7 +772,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010039765}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aeeb116ba96cde4190e71f9ee4101bd, type: 3}
   m_Name: 
@@ -788,20 +789,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1010039765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afcf4d9b581f0244bae6a508c068eefa, type: 3}
+  m_Script: {fileID: 11500000, guid: 048822945e8ef8942aba593b92ad6d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedIngredientsAtCurrentStation: []
+  inventory: []
+  currentStation: knife
   startingInventory:
   - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
-  inventory: []
-  selectedIngredients: []
-  currentStation: knife
+  finishedDish: {fileID: 0}
+  wantedDishes: []
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
   inventoryItemPrefab: {fileID: 934398016370705773, guid: 2b626f79e075df547a75598c3922d859, type: 3}
-  canvas: {fileID: 1116354819}
   inventoryParent: {fileID: 1459283707}
+  isCookingRecipe: 0
+  canServe: 0
 --- !u!1 &1116354818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,7 +1160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.8311548, y: 0.7164445}
   m_AnchorMax: {x: 0.9438185, y: 0.8034683}
-  m_AnchoredPosition: {x: -0.0024414062, y: 0.00015258789}
+  m_AnchoredPosition: {x: -0.0024414062, y: 0.00012207031}
   m_SizeDelta: {x: -0.0050659, y: 0.00045013}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1459283706
