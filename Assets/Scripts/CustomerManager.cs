@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CustomerMnager : MonoBehaviour
+public class CustomerManager : MonoBehaviour
 {
     private RecipeDataBase dataBase;
     private List<Recipe> recipes = new List<Recipe>();
@@ -16,11 +16,21 @@ public class CustomerMnager : MonoBehaviour
     public GameObject ingredientPrefab;  // The prefab for the ingredients
     private Transform ingredientsContainer; // The container where the ingredients will be added
 
+    private List<GameObject> recipeObjects;
+
+    [HideInInspector] public List<Dish> wantedDishes;
+
+    private bool waitingForCustomer;
+
     // Start is called before the first frame update
     void Start()
     {
+        wantedDishes = new();
+        recipeObjects = new();
+
         dataBase = GameManager.instance.dataBase;
         recipes = dataBase.recipes;
+        waitingForCustomer = false;
     }
 
     void Update()
@@ -31,21 +41,9 @@ public class CustomerMnager : MonoBehaviour
 
     public void AddRandomRecipe()
     {
-        if (recipes.Count > 0 && dataBase.wantedDishes.Count < 1)
+        if (recipes.Count > 0 && wantedDishes.Count < 2 && !waitingForCustomer)
         {
-            // Get a random index
-            int randomIndex = Random.Range(0, recipes.Count);
-            Recipe randomRecipe = recipes[randomIndex];
-
-            // Display the recipe
-            DisplayRecipe(randomRecipe);
-            dataBase.wantedDishes.Add(randomRecipe.output);
-
-            //Debug.Log($"Added {randomRecipe.name} to current recipes.");
-        }
-        else
-        {
-            //Debug.LogWarning("No recipes available in the database.");
+            StartCoroutine(AddNewRecipe(5));
         }
     }
 
@@ -54,6 +52,7 @@ public class CustomerMnager : MonoBehaviour
     {
         // Instantiate the recipe prefab
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
+        recipeObjects.Add(recipeObject);
 
 
         // Set the recipe name (TMP Text) and the timer
@@ -81,5 +80,46 @@ public class CustomerMnager : MonoBehaviour
 
         Image ingredientIcon = ingredientObject.GetComponentInChildren<Image>();
         ingredientIcon.sprite = ingredient.icon;
+    }
+
+    public void FinishDish(Dish dish)
+    {
+        if (wantedDishes.Contains(dish))
+        {
+            //I can't think of another way to do this
+            foreach(GameObject obj in recipeObjects)
+            {
+                Destroy(obj);
+            }
+            wantedDishes.Remove(dish);
+
+            foreach(Dish wantedDish in wantedDishes)
+            {
+                DisplayRecipe(wantedDish.recipe);
+            }
+
+            
+            Debug.Log("Served A Correct Dish!");
+        }
+        else
+        {
+            Debug.Log("Served Wrong Dish!");
+        }
+    }
+
+    private IEnumerator AddNewRecipe(int waitingTimeSeconds)
+    {
+        waitingForCustomer = true;
+        yield return new WaitForSeconds(waitingTimeSeconds);
+
+        // Get a random index
+        int randomIndex = Random.Range(0, recipes.Count);
+        Recipe randomRecipe = recipes[randomIndex];
+
+        // Display the recipe
+        DisplayRecipe(randomRecipe);
+        wantedDishes.Add(randomRecipe.output);
+
+        waitingForCustomer = false;
     }
 }

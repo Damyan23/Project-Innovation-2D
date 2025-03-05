@@ -16,7 +16,7 @@ public class CookingManager : MonoBehaviour
 
     [Header("Recipe Debug Stuff")]
     public Dish finishedDish;
-    public List<Dish> wantedDishes;
+    //public List<Dish> wantedDishes;
 
     [Header("Prefabs")]
     public GameObject cookingStepPrefab;
@@ -32,9 +32,14 @@ public class CookingManager : MonoBehaviour
     public bool isCookingRecipe;
     public bool canServe;
 
+    CustomerManager customerManager;
+
 
     void Start()
     {
+        customerManager = GetComponent<CustomerManager>();
+        if (customerManager == null) Debug.LogWarning("No CustomerManager Script Found");
+
         inventoryItems = new();
 
         selectedIngredients = new();
@@ -43,8 +48,6 @@ public class CookingManager : MonoBehaviour
         selectedIngredients.Add("plating", new());
 
         DisplayInventory();
-
-        wantedDishes = GameManager.instance.dataBase.wantedDishes;
 
         finishedDish = null;
         isCookingRecipe = false;
@@ -119,17 +122,9 @@ public class CookingManager : MonoBehaviour
     private void ServePlate()
     {
         canServe = false;
-        Debug.Log("Served " + finishedDish.dishName);
 
-        foreach (Dish dish in wantedDishes)
-        {
-            if (dish.dishName == finishedDish.dishName)
-            {
-                Debug.Log("Served Correct Recipe!");
-                wantedDishes.Remove(dish);
-                break;
-            }
-        }
+        Debug.Log("Served " + finishedDish.dishName);
+        customerManager.FinishDish(finishedDish);
 
 
         finishedDish = null;

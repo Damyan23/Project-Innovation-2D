@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Salad
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: 9e7771f048fdf40839b6ee9dbacad67c, type: 3}
+  recipe: {fileID: 11400000, guid: 82cc7bfb30507214580d028d36df9edf, type: 2}
   dishName: Salad
