@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4603cb08e6b82a4eb0d5e9e87bd9455, type: 3}
-  m_Name: Chopped Onion
+  m_Name: Pan of Shrimpine Soup
   m_EditorClassIdentifier: 
-  ingredientName: Chopped Onion
-  icon: {fileID: 21300000, guid: 13ba34da9011744c884f459ce4699444, type: 3}
-  quantity: 1
+  ingredientName: Pan of Shrimpine Soup
+  icon: {fileID: 21300000, guid: b69ac4f35ccd61c409e57ec7e0d15db5, type: 3}
+  isInfinite: 0

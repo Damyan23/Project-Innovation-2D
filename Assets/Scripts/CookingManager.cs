@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
-using Mirror.BouncyCastle.Crypto.Engines;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class CookingManager : MonoBehaviour
 {
@@ -16,7 +14,6 @@ public class CookingManager : MonoBehaviour
 
     [Header("Recipe Debug Stuff")]
     public Dish finishedDish;
-    //public List<Dish> wantedDishes;
 
     [Header("Prefabs")]
     public GameObject cookingStepPrefab;
@@ -45,6 +42,7 @@ public class CookingManager : MonoBehaviour
         selectedIngredients = new();
 
         selectedIngredients.Add("knife", new());
+        selectedIngredients.Add("soup", new());
         selectedIngredients.Add("plating", new());
 
         DisplayInventory();
@@ -70,53 +68,47 @@ public class CookingManager : MonoBehaviour
             TrashIngredients();
         }
 
-        
 
-        if (currentStation == "plating")
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            if (Input.GetKeyDown(KeyCode.F))
+            if (currentStation == "plating")
             {
                 Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
 
-                foreach(Recipe recipe in recipes)
+                foreach (Recipe recipe in recipes)
                 {
-                    if(IsValidRecipe(selectedIngredients[currentStation], recipe))
+                    if (IsValidRecipe(selectedIngredients[currentStation], recipe))
                     {
                         StartCoroutine(recipe.StartMakingRecipe(this));
                         selectedIngredients[currentStation].Clear();
-                        break;
+                        return;
                     }
                 }
-            } else if (Input.GetKeyDown(KeyCode.E))
+            }
+            else
             {
-                if (canServe && finishedDish != null)
+                List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
+
+                foreach (CookingStep step in available)
                 {
-                    ServePlate();
+                    if (IsValidCookingStep(selectedIngredients[currentStation], step))
+                    {
+                        step.ProcessCookingStep(this, currentStation);
+                        selectedIngredients[currentStation].Clear();
+                        return;
+                    }
                 }
             }
-            
-            return;
         }
-
-
-
-        //Execute a cooking step (if possible)
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
-            
-            foreach(CookingStep step in available)
+            if (canServe && finishedDish != null)
             {
-                if (IsValidCookingStep(selectedIngredients[currentStation], step))
-                {
-                    step.ProcessCookingStep(this, currentStation);
-                    selectedIngredients[currentStation].Clear();
-                    return;
-                }
+                ServePlate();
             }
-
-            Debug.LogWarning("Nothing Processed");           
         }
+
+
     }
 
     private void ServePlate()
@@ -140,7 +132,7 @@ public class CookingManager : MonoBehaviour
         {
             if (step.requiredStation == currentStation)
             {
-                if(CheckRequiredIngedients(inventory, step))
+                if (CheckRequiredIngedients(inventory, step))
                 {
                     availableSteps.Add(step);
                 }
@@ -157,7 +149,7 @@ public class CookingManager : MonoBehaviour
 
     bool CheckRequiredIngedients(List<Ingredient> inventory, CookingStep step)
     {
-        foreach(Ingredient ingredient in step.inputIngredients)
+        foreach (Ingredient ingredient in step.inputIngredients)
         {
             if (!inventory.Contains(ingredient)) return false;
         }
@@ -166,12 +158,12 @@ public class CookingManager : MonoBehaviour
     }
 
     void DisplayInventory()
-    { 
+    {
 
-        foreach(Ingredient ingredient in startingInventory)
+        foreach (Ingredient ingredient in startingInventory)
         {
             AddIngredient(ingredient);
-        }        
+        }
     }
 
     public void AddIngredient(Ingredient ingredient)
@@ -180,6 +172,10 @@ public class CookingManager : MonoBehaviour
         inventoryItem.GetComponent<Image>().sprite = ingredient.icon;
         inventoryItem.GetComponent<InventoryItem>().ingredient = ingredient;
         inventoryItem.GetComponent<InventoryItem>().manager = this;
+
+        Transform child = inventoryItem.transform.GetChild(0);
+        child.GetComponent<TMP_Text>().text = ingredient.ingredientName;
+
         inventoryItems.Add(inventoryItem);
         inventory.Add(ingredient);
     }
@@ -188,9 +184,9 @@ public class CookingManager : MonoBehaviour
     {
         inventory.Remove(ingredient);
 
-        foreach(GameObject item in inventoryItems)
+        foreach (GameObject item in inventoryItems)
         {
-            if(item.GetComponent<InventoryItem>().ingredient == ingredient)
+            if (item.GetComponent<InventoryItem>().ingredient == ingredient)
             {
                 inventoryItems.Remove(item);
                 Destroy(item);
@@ -204,7 +200,7 @@ public class CookingManager : MonoBehaviour
         if (isCookingRecipe) return;
         if (currentStation == "knife" && selectedIngredients["knife"].Count >= 1) return;
 
-        if(!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
+        if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
     }
 
@@ -214,15 +210,12 @@ public class CookingManager : MonoBehaviour
     {
         if (ingredients.Count == step.inputIngredients.Count)
         {
-            for(int i = 0; i < ingredients.Count; i++)
-            {
-                if (ingredients[i].name != step.inputIngredients[i].name)
-                {
-                    return false;
-                }
-            }
+            //Sort the lists and then compare them (ChatGPT)
+            //This makes sure the ingredients are correct regardless of order of selecting them
+            bool areEqual = ingredients.Select(obj => obj.ingredientName).OrderBy(x => x)
+                .SequenceEqual(step.inputIngredients.Select(obj => obj.ingredientName).OrderBy(x => x));
 
-            return true;
+            return areEqual;
         }
         else
         {

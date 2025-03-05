@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Rendering;
+using UnityEditor;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -18,37 +20,66 @@ public class CustomerManager : MonoBehaviour
 
     private List<GameObject> recipeObjects;
 
-    [HideInInspector] public List<Dish> wantedDishes;
+    [HideInInspector] public List<CustomerRequest> requests;
 
     private bool waitingForCustomer;
+
+    public const float TimePerRequest = 40f;
+
+    public float timeLeft;
+
+    public TMP_Text levelTimer;
 
     // Start is called before the first frame update
     void Start()
     {
-        wantedDishes = new();
+        requests = new();
         recipeObjects = new();
 
         dataBase = GameManager.instance.dataBase;
         recipes = dataBase.recipes;
         waitingForCustomer = false;
+
+        timeLeft = 120f;
     }
 
     void Update()
     {
+        timeLeft -= Time.deltaTime;
+        if(timeLeft <= 0)
+        {
+            Debug.LogError("You Fucking Died");
+            EditorApplication.isPaused = true;
+        }
+        levelTimer.text = "Time left: " + Mathf.RoundToInt(timeLeft).ToString();
+
         AddRandomRecipe ();
+
+        foreach(CustomerRequest req in requests)
+        {
+            GameObject obj = req.requestObject;
+            float timeLeft = TimePerRequest - (Time.time - req.startTime);
+            if(timeLeft <= 0)
+            {
+                Debug.LogError("You Fucking Died");
+                EditorApplication.isPaused = true;
+            }
+
+            obj.transform.Find("Top").GetComponentInChildren<Image>().fillAmount =  timeLeft / TimePerRequest;
+        }
     } 
 
 
     public void AddRandomRecipe()
     {
-        if (recipes.Count > 0 && wantedDishes.Count < 2 && !waitingForCustomer)
+        if (recipes.Count > 0 && requests.Count < 2 && !waitingForCustomer)
         {
-            StartCoroutine(AddNewRecipe(5));
+            StartCoroutine(AddNewRequest(5));
         }
     }
 
     // Function to display the recipe
-    private void DisplayRecipe(Recipe recipe)
+    private GameObject DisplayRecipe(Recipe recipe)
     {
         // Instantiate the recipe prefab
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
@@ -65,49 +96,90 @@ public class CustomerManager : MonoBehaviour
 
         ingredientsContainer = recipeObject.transform.Find("Content");
 
-        // Display the ingredients
-        foreach (Ingredient ingredient in recipe.ingredients)
+        foreach(Ingredient ingredient in recipe.ingredients)
         {
-            DisplayIngredient(ingredient);
+            CookingStep step = GetCookingStepFromIngredient(ingredient);
+            if(step != null)
+            {
+                DisplayCookingStep(step);
+            }
         }
+
+        return recipeObject;
+        
     }
 
+
+    CookingStep GetCookingStepFromIngredient(Ingredient ingredient)
+    {
+        CookingStep[] allSteps = Resources.LoadAll<CookingStep>("CookingSteps");
+
+        foreach(CookingStep step in allSteps)
+        {
+            if(step.output.ingredientName == ingredient.ingredientName)
+            {
+                return step;
+            }
+        }
+
+        return null;
+    }
+
+
+
     // Function to display an ingredient
-    private void DisplayIngredient(Ingredient ingredient)
+    private void DisplayCookingStep(CookingStep step)
     {
         // Instantiate an ingredient prefab
         GameObject ingredientObject = Instantiate(ingredientPrefab, ingredientsContainer);
 
-        Image ingredientIcon = ingredientObject.GetComponentInChildren<Image>();
-        ingredientIcon.sprite = ingredient.icon;
+        //TODO: Add support for multiple input ingredients
+        Image inputIcon = ingredientObject.GetComponentInChildren<Image>();
+        inputIcon.sprite = step.inputIngredients[0].icon;
+
+
+
+        
     }
 
     public void FinishDish(Dish dish)
     {
-        if (wantedDishes.Contains(dish))
+        CustomerRequest requestToFill = null;
+
+        foreach(CustomerRequest req in requests)
         {
-            //I can't think of another way to do this
-            foreach(GameObject obj in recipeObjects)
+            if(req.wantedDish.dishName == dish.dishName)
             {
-                Destroy(obj);
+                //Serve the oldest request first
+                if(requestToFill == null || req.startTime < requestToFill.startTime)
+                {
+                    requestToFill = req;
+                }
             }
-            wantedDishes.Remove(dish);
+        }
 
-            foreach(Dish wantedDish in wantedDishes)
-            {
-                DisplayRecipe(wantedDish.recipe);
-            }
+        //No correct request can be filled
+        if (requestToFill == null)
+        {
+            Debug.LogWarning("Wrong Dish!");
+            return;
+        }
 
+        Destroy(requestToFill.requestObject);
+        requests.Remove(requestToFill);
+
+        foreach(CustomerRequest customerRequest in requests)
+        {
+            DisplayRecipe(customerRequest.dishRecipe);
+        }
+
+        timeLeft += 20f;
             
-            Debug.Log("Served A Correct Dish!");
-        }
-        else
-        {
-            Debug.Log("Served Wrong Dish!");
-        }
+        Debug.Log("Served A Correct Dish!");
+        
     }
 
-    private IEnumerator AddNewRecipe(int waitingTimeSeconds)
+    private IEnumerator AddNewRequest(int waitingTimeSeconds)
     {
         waitingForCustomer = true;
         yield return new WaitForSeconds(waitingTimeSeconds);
@@ -116,9 +188,9 @@ public class CustomerManager : MonoBehaviour
         int randomIndex = Random.Range(0, recipes.Count);
         Recipe randomRecipe = recipes[randomIndex];
 
-        // Display the recipe
-        DisplayRecipe(randomRecipe);
-        wantedDishes.Add(randomRecipe.output);
+        // Create the request
+        CustomerRequest newRequest = new(randomRecipe.output, randomRecipe, Time.time, DisplayRecipe(randomRecipe));
+        requests.Add(newRequest);
 
         waitingForCustomer = false;
     }
