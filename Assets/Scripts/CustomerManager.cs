@@ -12,23 +12,21 @@ public class CustomerManager : MonoBehaviour
     private List<Recipe> recipes = new List<Recipe>();
 
     // Prefabs to instantiate
-    public GameObject recipePrefab;  // The prefab for the whole recipe
-    public Transform recipeContainer; // The container where the recipe prefab will be instantiated
+    [SerializeField] private GameObject recipePrefab;  // The prefab for the whole recipe
+    [SerializeField] private Transform recipeContainer; // The container where the recipe prefab will be instantiated
 
-    public GameObject ingredientPrefab;  // The prefab for the ingredients
+    [SerializeField] private GameObject ingredientPrefab;  // The prefab for the ingredients
     private Transform ingredientsContainer; // The container where the ingredients will be added
 
     private List<GameObject> recipeObjects;
 
     [HideInInspector] public List<CustomerRequest> requests;
 
+
     private bool waitingForCustomer;
-
-    public const float TimePerRequest = 40f;
-
-    public float timeLeft;
-
-    public TMP_Text levelTimer;
+    private const float TimePerRequest = 40f;
+    private float timeLeft;
+    [HideInInspector] public TMP_Text levelTimer;
 
     // Start is called before the first frame update
     void Start()

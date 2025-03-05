@@ -931,12 +931,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 048822945e8ef8942aba593b92ad6d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedIngredientsAtCurrentStation: []
-  inventory: []
-  currentStation: knife
   startingInventory:
   - {fileID: 11400000, guid: 876bc986238d7814cb7c9c680ad80035, type: 2}
   - {fileID: 11400000, guid: 2064cd170371a5b4fac2ede5fde37bb8, type: 2}
+  inventory: []
+  currentStation: knife
   finishedDish: {fileID: 0}
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
   inventoryItemPrefab: {fileID: 934398016370705773, guid: 2b626f79e075df547a75598c3922d859, type: 3}

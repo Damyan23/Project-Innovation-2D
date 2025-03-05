@@ -7,27 +7,26 @@ using UnityEngine.UI;
 public class CookingManager : MonoBehaviour
 {
     [Header("Inventory debug Stuff")]
-    public List<Ingredient> selectedIngredientsAtCurrentStation;
-    public List<Ingredient> inventory;
-    public string currentStation = "knife";
     public List<Ingredient> startingInventory;
+    public List<Ingredient> inventory;
+    public string currentStation = "cutting";
 
-    [Header("Recipe Debug Stuff")]
-    public Dish finishedDish;
+    [HideInInspector] public Dish finishedDish;
 
     [Header("Prefabs")]
-    public GameObject cookingStepPrefab;
-    public GameObject inventoryItemPrefab;
+    [SerializeField] private GameObject cookingStepPrefab;
+    [SerializeField] private GameObject inventoryItemPrefab;
 
     [Header("References")]
-    public Transform inventoryParent;
+    [SerializeField] private Transform inventoryParent;
 
     List<GameObject> inventoryItems;
 
     //Allow for different selected ingredients for each station
-    public Dictionary<string, List<Ingredient>> selectedIngredients;
-    public bool isCookingRecipe;
-    public bool canServe;
+    [HideInInspector] public Dictionary<string, List<Ingredient>> selectedIngredients;
+
+    [HideInInspector] public bool isCookingRecipe;
+    [HideInInspector] public bool canServe;
 
     CustomerManager customerManager;
 
@@ -55,12 +54,6 @@ public class CookingManager : MonoBehaviour
 
     void Update()
     {
-        //Debugging purposes
-        List<Ingredient> test;
-        selectedIngredients.TryGetValue(currentStation, out test);
-        if (test != null) selectedIngredientsAtCurrentStation = test;
-
-
         if (isCookingRecipe) return;
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -73,53 +66,59 @@ public class CookingManager : MonoBehaviour
         {
             if (currentStation == "plating")
             {
-                Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
-
-                foreach (Recipe recipe in recipes)
-                {
-                    if (IsValidRecipe(selectedIngredients[currentStation], recipe))
-                    {
-                        StartCoroutine(recipe.StartMakingRecipe(this));
-                        selectedIngredients[currentStation].Clear();
-                        return;
-                    }
-                }
+                TryPlateDish();
             }
             else
             {
-                List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
-
-                foreach (CookingStep step in available)
-                {
-                    if (IsValidCookingStep(selectedIngredients[currentStation], step))
-                    {
-                        step.ProcessCookingStep(this, currentStation);
-                        selectedIngredients[currentStation].Clear();
-                        return;
-                    }
-                }
+                TryProcessIngredient();
             }
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (canServe && finishedDish != null)
+            if(currentStation == "plating")
             {
-                ServePlate();
+                TryServePlate();
             }
         }
-
-
     }
 
-    private void ServePlate()
+    public void TryProcessIngredient()
     {
-        canServe = false;
+        List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
 
-        Debug.Log("Served " + finishedDish.dishName);
-        customerManager.FinishDish(finishedDish);
+        foreach (CookingStep step in available)
+        {
+            if (IsValidCookingStep(selectedIngredients[currentStation], step))
+            {
+                step.ProcessCookingStep(this, currentStation);
+                selectedIngredients[currentStation].Clear();
+                return;
+            }
+        }
+    }
 
+    public void TryPlateDish()
+    {
+        Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
 
-        finishedDish = null;
+        foreach (Recipe recipe in recipes)
+        {
+            if (IsValidRecipe(selectedIngredients[currentStation], recipe))
+            {
+                StartCoroutine(recipe.StartMakingRecipe(this));
+                selectedIngredients[currentStation].Clear();
+                return;
+            }
+        }
+    }
+    private void TryServePlate()
+    {
+        if(canServe && finishedDish != null)
+        {
+            canServe = false;
+            customerManager.FinishDish(finishedDish);
+            finishedDish = null;
+        }
     }
 
     List<CookingStep> GetAvailableSteps(List<Ingredient> inventory, string station)
