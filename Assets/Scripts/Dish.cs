@@ -7,5 +7,6 @@ using UnityEngine.UI;
 public class Dish : ScriptableObject
 {
     public Sprite icon;
+    public Recipe recipe;
     public string dishName;
 }

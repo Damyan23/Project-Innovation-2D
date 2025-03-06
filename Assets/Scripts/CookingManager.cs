@@ -1,7 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using Mirror;
@@ -9,41 +9,46 @@ using Mirror;
 public class CookingManager : MonoBehaviour
 {
     [Header("Inventory debug Stuff")]
-    public List<Ingredient> selectedIngredientsAtCurrentStation;
-    public List<Ingredient> inventory;
-    public string currentStation = "knife";
     public List<Ingredient> startingInventory;
+    public List<Ingredient> inventory;
+    public string currentStation = "cutting";
 
     [Header("Recipe Debug Stuff")]
     [HideInInspector] public Dish finishedDish;
     public List<Dish> wantedDishes;
 
     [Header("Prefabs")]
-    public GameObject cookingStepPrefab;
-    public GameObject inventoryItemPrefab;
+    [SerializeField] private GameObject cookingStepPrefab;
+    [SerializeField] private GameObject inventoryItemPrefab;
 
     [Header("References")]
-    public Transform inventoryParent;
+    [SerializeField] private Transform inventoryParent;
 
     List<GameObject> inventoryItems;
 
     //Allow for different selected ingredients for each station
-    public Dictionary<string, List<Ingredient>> selectedIngredients;
-    public bool isCookingRecipe;
-    public bool canServe;
+    [HideInInspector] public Dictionary<string, List<Ingredient>> selectedIngredients;
+
+    [HideInInspector] public bool isCookingRecipe;
+    [HideInInspector] public bool canServe;
+
+    CustomerManager customerManager;
+
 
     void Start()
     {
+        customerManager = GetComponent<CustomerManager>();
+        if (customerManager == null) Debug.LogWarning("No CustomerManager Script Found");
+
         inventoryItems = new();
 
         selectedIngredients = new();
 
         selectedIngredients.Add("knife", new());
+        selectedIngredients.Add("soup", new());
         selectedIngredients.Add("plating", new());
 
         DisplayInventory();
-
-        wantedDishes = GameManager.instance.dataBase.wantedDishes;
 
         finishedDish = null;
         isCookingRecipe = false;
@@ -53,12 +58,6 @@ public class CookingManager : MonoBehaviour
 
     void Update()
     {
-        //Debugging purposes
-        List<Ingredient> test;
-        selectedIngredients.TryGetValue(currentStation, out test);
-        if (test != null) selectedIngredientsAtCurrentStation = test;
-
-
         if (isCookingRecipe) return;
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -66,70 +65,64 @@ public class CookingManager : MonoBehaviour
             TrashIngredients();
         }
 
-        if (currentStation == "plating")
+
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            if (Input.GetKeyDown(KeyCode.F))
+            if (currentStation == "plating")
             {
-                Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
-
-                foreach(Recipe recipe in recipes)
-                {
-                    if(IsValidRecipe(selectedIngredients[currentStation], recipe))
-                    {
-                        StartCoroutine(recipe.StartMakingRecipe(this));
-                        selectedIngredients[currentStation].Clear();
-                        break;
-                    }
-                }
-            } else if (Input.GetKeyDown(KeyCode.E))
-            {
-                if (canServe && finishedDish != null)
-                {
-                    ServePlate();
-                }
+                TryPlateDish();
             }
-            
-            return;
+            else
+            {
+                TryProcessIngredient();
+            }
         }
-
-
-
-        //Execute a cooking step (if possible)
-        // if (Input.GetKeyDown(KeyCode.F))
-        // {
-        //     List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
-            
-        //     foreach(CookingStep step in available)
-        //     {
-        //         if (IsValidCookingStep(selectedIngredients[currentStation], step))
-        //         {
-        //             step.ProcessCookingStep(this, currentStation);
-        //             selectedIngredients[currentStation].Clear();
-        //             return;
-        //         }
-        //     }
-
-        //     Debug.LogWarning("Nothing Processed");           
-        // }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if(currentStation == "plating")
+            {
+                TryServePlate();
+            }
+        }
     }
 
-    private void ServePlate()
+    public void TryProcessIngredient()
     {
-        canServe = false;
-        Debug.Log("Served " + finishedDish.dishName);
+        List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
 
-        foreach (Dish dish in wantedDishes)
+        foreach (CookingStep step in available)
         {
-            if (dish.dishName == finishedDish.dishName)
+            if (IsValidCookingStep(selectedIngredients[currentStation], step))
             {
-                Debug.Log("Served Correct Recipe!");
-                wantedDishes.Remove(dish);
-                break;
+                step.ProcessCookingStep(this, currentStation);
+                selectedIngredients[currentStation].Clear();
+                return;
             }
         }
+    }
 
+    public void TryPlateDish()
+    {
+        Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
 
-        finishedDish = null;
+        foreach (Recipe recipe in recipes)
+        {
+            if (IsValidRecipe(selectedIngredients[currentStation], recipe))
+            {
+                StartCoroutine(recipe.StartMakingRecipe(this));
+                selectedIngredients[currentStation].Clear();
+                return;
+            }
+        }
+    }
+    private void TryServePlate()
+    {
+        if(canServe && finishedDish != null)
+        {
+            canServe = false;
+            customerManager.FinishDish(finishedDish);
+            finishedDish = null;
+        }
     }
 
     List<CookingStep> GetAvailableSteps(List<Ingredient> inventory, string station)
@@ -142,7 +135,7 @@ public class CookingManager : MonoBehaviour
         {
             if (step.requiredStation == currentStation)
             {
-                if(CheckRequiredIngedients(inventory, step))
+                if (CheckRequiredIngedients(inventory, step))
                 {
                     availableSteps.Add(step);
                 }
@@ -159,7 +152,7 @@ public class CookingManager : MonoBehaviour
 
     bool CheckRequiredIngedients(List<Ingredient> inventory, CookingStep step)
     {
-        foreach(Ingredient ingredient in step.inputIngredients)
+        foreach (Ingredient ingredient in step.inputIngredients)
         {
             if (!inventory.Contains(ingredient)) return false;
         }
@@ -168,12 +161,12 @@ public class CookingManager : MonoBehaviour
     }
 
     void DisplayInventory()
-    { 
+    {
 
-        foreach(Ingredient ingredient in startingInventory)
+        foreach (Ingredient ingredient in startingInventory)
         {
             AddIngredient(ingredient);
-        }        
+        }
     }
 
     public void AddIngredient(Ingredient ingredient)
@@ -182,6 +175,10 @@ public class CookingManager : MonoBehaviour
         inventoryItem.GetComponent<Image>().sprite = ingredient.icon;
         inventoryItem.GetComponent<InventoryItem>().ingredient = ingredient;
         inventoryItem.GetComponent<InventoryItem>().manager = this;
+
+        Transform child = inventoryItem.transform.GetChild(0);
+        child.GetComponent<TMP_Text>().text = ingredient.ingredientName;
+
         inventoryItems.Add(inventoryItem);
         inventory.Add(ingredient);
     }
@@ -190,9 +187,9 @@ public class CookingManager : MonoBehaviour
     {
         inventory.Remove(ingredient);
 
-        foreach(GameObject item in inventoryItems)
+        foreach (GameObject item in inventoryItems)
         {
-            if(item.GetComponent<InventoryItem>().ingredient == ingredient)
+            if (item.GetComponent<InventoryItem>().ingredient == ingredient)
             {
                 inventoryItems.Remove(item);
                 Destroy(item);
@@ -206,7 +203,7 @@ public class CookingManager : MonoBehaviour
         if (isCookingRecipe) return;
         if (currentStation == "knife" && selectedIngredients["knife"].Count >= 1) return;
 
-        if(!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
+        if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
 
        FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
@@ -231,15 +228,12 @@ public class CookingManager : MonoBehaviour
     {
         if (ingredients.Count == step.inputIngredients.Count)
         {
-            for(int i = 0; i < ingredients.Count; i++)
-            {
-                if (ingredients[i].name != step.inputIngredients[i].name)
-                {
-                    return false;
-                }
-            }
+            //Sort the lists and then compare them (ChatGPT)
+            //This makes sure the ingredients are correct regardless of order of selecting them
+            bool areEqual = ingredients.Select(obj => obj.ingredientName).OrderBy(x => x)
+                .SequenceEqual(step.inputIngredients.Select(obj => obj.ingredientName).OrderBy(x => x));
 
-            return true;
+            return areEqual;
         }
         else
         {

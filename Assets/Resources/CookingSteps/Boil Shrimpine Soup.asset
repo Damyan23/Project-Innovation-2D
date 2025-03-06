@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
-  m_Name: Chop Onion
+  m_Name: Boil Shrimpine Soup
   m_EditorClassIdentifier: 
-  name: Onion
+  name: Carrot
   inputIngredients:
-  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
-  output: {fileID: 11400000, guid: 69a7dbe0c640c3047a6c23eee22656f7, type: 2}
-  requiredStation: knife
+  - {fileID: 11400000, guid: 0ccc434cab846484eb1b70c1748bc4a3, type: 2}
+  - {fileID: 11400000, guid: 2064cd170371a5b4fac2ede5fde37bb8, type: 2}
+  output: {fileID: 11400000, guid: 69c6e9e91844d8f4db812e69371db303, type: 2}
+  requiredStation: soup
