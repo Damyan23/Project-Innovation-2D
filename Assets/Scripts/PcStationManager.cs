@@ -29,6 +29,15 @@ public class StationManagerPc : MonoBehaviour
 
             if (startScreen.activeSelf) startScreen.SetActive(false);
         }
+
+        if (currentIndex == 0)
+        {
+            GameManager.instance.currentStation = "Cutting";
+        }
+        else if (currentIndex == 1)
+        {
+            GameManager.instance.currentStation = "Boiling";
+        }
     }
 
     void InitializeStations()

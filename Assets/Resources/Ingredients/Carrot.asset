@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Carrot
   m_EditorClassIdentifier: 
   ingredientName: Carrot
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: 5e4cb8bdd8882304ca5fb047abf2eaed, type: 3}
   isInfinite: 1

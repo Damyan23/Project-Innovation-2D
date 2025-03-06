@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Mirror.BouncyCastle.Crypto.Engines;
 using System.Linq;
+using Mirror;
 
 public class CookingManager : MonoBehaviour
 {
@@ -15,7 +15,7 @@ public class CookingManager : MonoBehaviour
     public List<Ingredient> startingInventory;
 
     [Header("Recipe Debug Stuff")]
-    public Dish finishedDish;
+    [HideInInspector] public Dish finishedDish;
     public List<Dish> wantedDishes;
 
     [Header("Prefabs")]
@@ -31,7 +31,6 @@ public class CookingManager : MonoBehaviour
     public Dictionary<string, List<Ingredient>> selectedIngredients;
     public bool isCookingRecipe;
     public bool canServe;
-
 
     void Start()
     {
@@ -67,8 +66,6 @@ public class CookingManager : MonoBehaviour
             TrashIngredients();
         }
 
-        
-
         if (currentStation == "plating")
         {
             if (Input.GetKeyDown(KeyCode.F))
@@ -98,22 +95,22 @@ public class CookingManager : MonoBehaviour
 
 
         //Execute a cooking step (if possible)
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
+        // if (Input.GetKeyDown(KeyCode.F))
+        // {
+        //     List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
             
-            foreach(CookingStep step in available)
-            {
-                if (IsValidCookingStep(selectedIngredients[currentStation], step))
-                {
-                    step.ProcessCookingStep(this, currentStation);
-                    selectedIngredients[currentStation].Clear();
-                    return;
-                }
-            }
+        //     foreach(CookingStep step in available)
+        //     {
+        //         if (IsValidCookingStep(selectedIngredients[currentStation], step))
+        //         {
+        //             step.ProcessCookingStep(this, currentStation);
+        //             selectedIngredients[currentStation].Clear();
+        //             return;
+        //         }
+        //     }
 
-            Debug.LogWarning("Nothing Processed");           
-        }
+        //     Debug.LogWarning("Nothing Processed");           
+        // }
     }
 
     private void ServePlate()
@@ -211,8 +208,23 @@ public class CookingManager : MonoBehaviour
 
         if(!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
+
+       FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
     }
 
+    private NetworkBehaviour FindLocalPlayer()
+    {
+        NetworkBehaviour[] allNetworkBehaviours = FindObjectsOfType<NetworkBehaviour>();
+        foreach (var netBehaviour in allNetworkBehaviours)
+        {
+            if (netBehaviour.isLocalPlayer)
+            {
+                return netBehaviour;
+            }
+        }
+        
+        return null;
+    }
 
     //Dont look at this function tbh
     bool IsValidCookingStep(List<Ingredient> ingredients, CookingStep step)

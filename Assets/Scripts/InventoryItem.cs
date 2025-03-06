@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
+
+[RequireComponent(typeof(NetworkIdentity))]
 public class InventoryItem : MonoBehaviour
 {
     // Start is called before the first frame update

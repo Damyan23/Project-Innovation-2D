@@ -25,14 +25,26 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnClientConnect()
     {
+        base.OnClientConnect();
+
         if (!NetworkServer.active) 
         {
             SceneManager.LoadScene(phoneScene);
-            NetworkClient.ready = true;
         }
 
+        // If this is a client, set the client ready
+        if (NetworkClient.connection is NetworkConnectionToClient clientConnection)
+        {
+            NetworkServer.SetClientReady(clientConnection);
+        }
+    }
 
-        base.OnClientConnect();
+    public override void OnServerConnect(NetworkConnectionToClient conn)
+    {
+        base.OnServerConnect(conn);
+        
+        // Automatically set the client ready when they connect to the server
+        NetworkServer.SetClientReady(conn);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

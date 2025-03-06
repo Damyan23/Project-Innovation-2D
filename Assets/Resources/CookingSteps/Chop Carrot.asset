@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Chop Carrot
   m_EditorClassIdentifier: 
+  name: Carrot
   inputIngredients:
   - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
   output: {fileID: 11400000, guid: 6fa75486a0a3e4c46ac65cbdae899c10, type: 2}

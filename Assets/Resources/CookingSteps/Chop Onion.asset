@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Chop Onion
   m_EditorClassIdentifier: 
+  name: Onion
   inputIngredients:
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   output: {fileID: 11400000, guid: 69a7dbe0c640c3047a6c23eee22656f7, type: 2}

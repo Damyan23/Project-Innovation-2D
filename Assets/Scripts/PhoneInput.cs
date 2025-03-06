@@ -65,9 +65,21 @@ public class PhoneInput : NetworkBehaviour
         base.OnStartLocalPlayer();
     }
 
+    void Start()
+    {
+        if (SystemInfo.supportsGyroscope)
+        {
+            Input.gyro.enabled = true;
+        }
+        else
+        {
+            Debug.LogWarning("Gyroscope not supported on this device!");
+        }
+    }
+
     void Update()
     {
-        if (isServer || !NetworkClient.active || !NetworkClient.isConnected)
+        if (isServer)
         {
             return;
         }
@@ -78,11 +90,11 @@ public class PhoneInput : NetworkBehaviour
         Vector3 magnetometer = Input.compass.rawVector;
 
         Vector2 touchPos = Vector2.zero;
-        CmdSendInput(touchPos, accelerometer, gyroRotation, magnetometer);
+        //CmdSendInput(touchPos, accelerometer, gyroRotation, magnetometer);
 
-        DebugData ();
+        //DebugData ();
 
-        DetectKnifeMotion ();
+        if (GameManager.instance.isCookingRecipe) { DetectKnifeMotion (); }
     }
 
     void DebugData ()
@@ -94,11 +106,16 @@ public class PhoneInput : NetworkBehaviour
         //           $"Magnetometer: {magnetometer}");
     }
 
+    [Command]
+    void SendKnifeDetection ()
+    {
+        GameManager.instance.cookRecipeEvent?.Invoke();
+        GameManager.instance.isCookingRecipe = true;
+        Debug.Log ("Sent knife detection to server");
+    }
+
     void DetectKnifeMotion()
     {
-        if (Time.time - lastKnifeMotionTime < knifeMotionCooldown)
-            return; // Prevent rapid multiple detections
-
         Vector3 acceleration = Input.acceleration;
         Vector3 gyroRotation = Input.gyro.rotationRate;
         Vector3 gravity = Input.gyro.gravity; // Used to detect orientation
@@ -107,15 +124,15 @@ public class PhoneInput : NetworkBehaviour
         bool isSideways = Mathf.Abs(gravity.x) > 0.7f; // If x is large, phone is on its sidex > 0.7
 
         //Detect proper up/down motion (instead of side-to-side)
-        bool isFastDownward = acceleration.z < -0.6f; // Moving down when sideways
-        bool isFastUpward = acceleration.z > 0.6f;    // Moving up when sideways
-        bool isRotatingFast = Mathf.Abs(gyroRotation.y) > 1.6f; // Rotating along correct axis
+        bool isFastDownward = acceleration.z < -0.5f; // Moving down when sideways
+        bool isFastUpward = acceleration.z > 0.5f;    // Moving up when sideways
+        bool isRotatingFast = Mathf.Abs(gyroRotation.y) > 1.5f; // Rotating along correct axis
 
         //Detect knife motion ONLY when phone is sideways & power button is up
         if (isSideways && (isFastDownward || isFastUpward) && isRotatingFast)
         {
-            Debug.Log("Knife Motion Detected!");
-            lastKnifeMotionTime = Time.time; // Update cooldown timer
+            SendKnifeDetection ();
+            Debug.Log ("Detected knife motion");
         }
 
         lastAcceleration = acceleration;
