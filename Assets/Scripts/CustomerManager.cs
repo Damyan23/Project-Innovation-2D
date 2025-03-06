@@ -49,7 +49,7 @@ public class CustomerManager : MonoBehaviour
             Debug.LogError("You Fucking Died");
             EditorApplication.isPaused = true;
         }
-        levelTimer.text = "Time left: " + Mathf.RoundToInt(timeLeft).ToString();
+        levelTimer.text = Mathf.RoundToInt(timeLeft).ToString();
 
         AddRandomRecipe ();
 
@@ -86,22 +86,22 @@ public class CustomerManager : MonoBehaviour
 
         // Set the recipe name (TMP Text) and the timer
         Transform topPart = recipeObject.transform.Find("Top");
-        TMP_Text recipeNameText = topPart.GetComponentInChildren<TMP_Text>();
-        recipeNameText.text = recipe.name;
+        //TMP_Text recipeNameText = topPart.GetComponentInChildren<TMP_Text>();
+        //recipeNameText.text = recipe.name;
 
         Image timerImage = topPart.GetComponentInChildren<Image>();
         timerImage.fillAmount = 1f;
 
-        ingredientsContainer = recipeObject.transform.Find("Content");
+        //ingredientsContainer = recipeObject.transform.Find("Content");
 
-        foreach(Ingredient ingredient in recipe.ingredients)
-        {
-            CookingStep step = GetCookingStepFromIngredient(ingredient);
-            if(step != null)
-            {
-                DisplayCookingStep(step);
-            }
-        }
+        //foreach (Ingredient ingredient in recipe.ingredients)
+        //{
+        //    CookingStep step = GetCookingStepFromIngredient(ingredient);
+        //    if (step != null)
+        //    {
+        //        DisplayCookingStep(step);
+        //    }
+        //}
 
         return recipeObject;
         
@@ -133,11 +133,7 @@ public class CustomerManager : MonoBehaviour
 
         //TODO: Add support for multiple input ingredients
         Image inputIcon = ingredientObject.GetComponentInChildren<Image>();
-        inputIcon.sprite = step.inputIngredients[0].icon;
-
-
-
-        
+        inputIcon.sprite = step.inputIngredients[0].icon;        
     }
 
     public void FinishDish(Dish dish)
@@ -166,11 +162,6 @@ public class CustomerManager : MonoBehaviour
         Destroy(requestToFill.requestObject);
         requests.Remove(requestToFill);
 
-        foreach(CustomerRequest customerRequest in requests)
-        {
-            DisplayRecipe(customerRequest.dishRecipe);
-        }
-
         timeLeft += 20f;
             
         Debug.Log("Served A Correct Dish!");
@@ -189,6 +180,7 @@ public class CustomerManager : MonoBehaviour
         // Create the request
         CustomerRequest newRequest = new(randomRecipe.output, randomRecipe, Time.time, DisplayRecipe(randomRecipe));
         requests.Add(newRequest);
+        recipeObjects.Add(newRequest.requestObject);
 
         waitingForCustomer = false;
     }

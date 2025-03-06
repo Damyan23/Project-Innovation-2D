@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4603cb08e6b82a4eb0d5e9e87bd9455, type: 3}
-  m_Name: Fish
+  m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
+  m_Name: Cut Sardine
   m_EditorClassIdentifier: 
-  ingredientName: Fish
-  icon: {fileID: 21300000, guid: 0f5cc2a1b4278c046b882acbbab3f429, type: 3}
-  isInfinite: 1
+  inputIngredients:
+  - {fileID: 11400000, guid: 876bc986238d7814cb7c9c680ad80035, type: 2}
+  output: {fileID: 11400000, guid: 0ccc434cab846484eb1b70c1748bc4a3, type: 2}
+  requiredStation: knife

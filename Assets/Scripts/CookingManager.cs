@@ -113,7 +113,7 @@ public class CookingManager : MonoBehaviour
     }
     private void TryServePlate()
     {
-        if(canServe && finishedDish != null)
+        if (canServe && finishedDish != null)
         {
             canServe = false;
             customerManager.FinishDish(finishedDish);
