@@ -3,6 +3,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using Mirror;
 
 public class CookingManager : MonoBehaviour
 {
@@ -11,7 +13,9 @@ public class CookingManager : MonoBehaviour
     public List<Ingredient> inventory;
     public string currentStation = "cutting";
 
+    [Header("Recipe Debug Stuff")]
     [HideInInspector] public Dish finishedDish;
+    public List<Dish> wantedDishes;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject cookingStepPrefab;
@@ -201,8 +205,23 @@ public class CookingManager : MonoBehaviour
 
         if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
+
+       FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
     }
 
+    private NetworkBehaviour FindLocalPlayer()
+    {
+        NetworkBehaviour[] allNetworkBehaviours = FindObjectsOfType<NetworkBehaviour>();
+        foreach (var netBehaviour in allNetworkBehaviours)
+        {
+            if (netBehaviour.isLocalPlayer)
+            {
+                return netBehaviour;
+            }
+        }
+        
+        return null;
+    }
 
     //Dont look at this function tbh
     bool IsValidCookingStep(List<Ingredient> ingredients, CookingStep step)

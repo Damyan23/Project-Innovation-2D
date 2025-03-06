@@ -171,7 +171,6 @@ MonoBehaviour:
   leftIcon: {fileID: 1270866722}
   centerIcon: {fileID: 951671611}
   rightIcon: {fileID: 923392269}
-  currentStationFull: {fileID: 1459283709}
   stationIcons:
   - {fileID: 21300000, guid: 90241266beeefe543b494874efb2e70e, type: 3}
   - {fileID: 21300000, guid: fabb543694ada05488cebb7471930d29, type: 3}
@@ -851,6 +850,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 233855895}
+        m_TargetAssemblyTypeName: PhoneStationManager, Assembly-CSharp
+        m_MethodName: StartCooking
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1010039765
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,6 +876,7 @@ GameObject:
   - component: {fileID: 1010039766}
   - component: {fileID: 1010039770}
   - component: {fileID: 1010039771}
+  - component: {fileID: 1010039772}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -885,6 +897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recipes: []
+  wantedDishes: []
 --- !u!114 &1010039767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,9 +922,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e514753dff67aa748b89d5dea3e2a5de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   playerStartedGame: 0
   dataBase: {fileID: 0}
   eventManager: {fileID: 0}
+  allCookingSteps: []
+  ingredientPrefab: {fileID: 0}
+  isCookingRecipe: 0
+  cookingManager: {fileID: 0}
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
@@ -949,22 +969,41 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010039765}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afcf4d9b581f0244bae6a508c068eefa, type: 3}
+  m_Script: {fileID: 11500000, guid: 048822945e8ef8942aba593b92ad6d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedIngredientsAtCurrentStation: []
+  inventory: []
+  currentStation: knife
   startingInventory:
   - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
   - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
-  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
-  inventory: []
-  selectedIngredients: []
-  currentStation: knife
+  finishedDish: {fileID: 0}
+  wantedDishes: []
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
   inventoryItemPrefab: {fileID: 934398016370705773, guid: 2b626f79e075df547a75598c3922d859, type: 3}
-  canvas: {fileID: 1116354819}
   inventoryParent: {fileID: 1459283707}
+  isCookingRecipe: 0
+  canServe: 0
+--- !u!114 &1010039772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010039765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 1104142215
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1116354818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,7 +1424,6 @@ GameObject:
   - component: {fileID: 1459283707}
   - component: {fileID: 1459283708}
   - component: {fileID: 1459283710}
-  - component: {fileID: 1459283709}
   m_Layer: 0
   m_Name: Inventory Space
   m_TagString: Untagged
@@ -1419,7 +1457,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1459283706}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
@@ -1436,36 +1474,6 @@ MonoBehaviour:
   m_Spacing: {x: 100, y: 100}
   m_Constraint: 1
   m_ConstraintCount: 4
---- !u!114 &1459283709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1459283706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1459283710
 CanvasRenderer:
   m_ObjectHideFlags: 0

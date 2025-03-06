@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Boil Shrimpine Soup
   m_EditorClassIdentifier: 
+  name: Carrot
   inputIngredients:
   - {fileID: 11400000, guid: 0ccc434cab846484eb1b70c1748bc4a3, type: 2}
   - {fileID: 11400000, guid: e58c362cbc75c554caabee4135cc793a, type: 2}

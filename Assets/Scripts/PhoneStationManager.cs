@@ -9,7 +9,6 @@ public class PhoneStationManager : MonoBehaviour
     [SerializeField] private Image leftIcon;   // Previous station icon
     [SerializeField] private Image centerIcon; // Current station icon
     [SerializeField] private Image rightIcon;  // Next station icon
-    [SerializeField] private Image currentStationFull; // Full image of the selected station
 
     [SerializeField] private Sprite[] stationIcons;  // Array of station icons
     [SerializeField] private Sprite[] stationFullImages; // Array of full station images
@@ -41,10 +40,21 @@ public class PhoneStationManager : MonoBehaviour
         SetFullAlpha(leftIcon);
         SetFullAlpha(centerIcon);
         SetFullAlpha(rightIcon);
-        SetFullAlpha(currentStationFull);
 
         // Display the Knife Station (index 0)
         UpdateStationDisplay();
+
+        GameManager.instance.playerStartedGame = true;
+    }
+
+    public void StartCooking ()
+    {
+        Debug.Log (GameManager.instance.playerStartedGame);
+        if (GameManager.instance.playerStartedGame && !GameManager.instance.isCookingRecipe)
+        {
+            GameManager.instance.isCookingRecipe = true;
+            NetworkEventManager.instance.UpdateVariableInClinet (true);
+        }
     }
 
     private void ShowNextStation()
@@ -63,9 +73,6 @@ public class PhoneStationManager : MonoBehaviour
 
     private void UpdateStationDisplay()
     {
-        // Update center station full image
-        currentStationFull.sprite = stationFullImages[currentIndex];
-
         // Update icons
         centerIcon.sprite = stationIcons[currentIndex];
         leftIcon.sprite = stationIcons[(currentIndex - 1 + stationIcons.Length) % stationIcons.Length];
