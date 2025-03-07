@@ -115,8 +115,9 @@ public class GameManager : NetworkBehaviour
         Debug.Log (isCookingRecipe);
         if (spawnedIngredient != null && isCookingRecipe)
         {
-            if (currentStation == "Cutting") cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("knife");
-            if (currentStation == "Boiling") cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("Boiling");
+            cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("knife");
+            // if (currentStation == "Cutting") 
+            // if (currentStation == "Boiling") cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("Boiling");
             isCookingRecipe = false;
             UpdateVariableInClient (false);
             Debug.Log ("cooking ingridient called:");

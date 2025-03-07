@@ -986,7 +986,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recipes: []
-  wantedDishes: []
 --- !u!114 &1010039767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1018,7 +1017,7 @@ MonoBehaviour:
   dataBase: {fileID: 0}
   eventManager: {fileID: 0}
   allCookingSteps:
-  - {fileID: 11400000, guid: 81bed169d72dbf7409018d25664bcf80, type: 2}
+  - {fileID: 11400000, guid: 907e31f5552790f46b74abc089f97099, type: 2}
   - {fileID: 11400000, guid: 5ec92f4fbccb30e40b5cc0c4dc5e1438, type: 2}
   ingredientPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
   isCookingRecipe: 0
@@ -1054,6 +1053,7 @@ MonoBehaviour:
   recipePrefab: {fileID: 1304508429350557006, guid: c74d0aa05b58865458e657771393c991, type: 3}
   recipeContainer: {fileID: 1116354819}
   ingredientPrefab: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+  levelTimer: {fileID: 0}
 --- !u!114 &1010039771
 MonoBehaviour:
   m_ObjectHideFlags: 0

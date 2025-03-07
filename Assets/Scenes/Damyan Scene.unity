@@ -897,7 +897,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recipes: []
-  wantedDishes: []
 --- !u!114 &1010039767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -932,6 +931,7 @@ MonoBehaviour:
   ingredientPrefab: {fileID: 0}
   isCookingRecipe: 0
   cookingManager: {fileID: 0}
+  currentStation: 
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
@@ -962,6 +962,7 @@ MonoBehaviour:
   recipePrefab: {fileID: 1304508429350557006, guid: c74d0aa05b58865458e657771393c991, type: 3}
   recipeContainer: {fileID: 1116354819}
   ingredientPrefab: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
+  levelTimer: {fileID: 0}
 --- !u!114 &1010039771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -974,12 +975,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 048822945e8ef8942aba593b92ad6d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedIngredientsAtCurrentStation: []
+  startingInventory:
+  - {fileID: 11400000, guid: 3678dc907b10b494d9d65afdee4dcbe3, type: 2}
+  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   inventory: []
   currentStation: knife
-  startingInventory:
-  - {fileID: 11400000, guid: 01ff45430ddfa7d4b80ae93568a76a1b, type: 2}
-  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   finishedDish: {fileID: 0}
   wantedDishes: []
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
