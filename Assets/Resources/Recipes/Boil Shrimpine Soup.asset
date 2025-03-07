@@ -16,6 +16,6 @@ MonoBehaviour:
   ingredients:
   - {fileID: 11400000, guid: 69c6e9e91844d8f4db812e69371db303, type: 2}
   icon: {fileID: 21300000, guid: d53cc8e127d930840bb537a8e787a2d8, type: 3}
-  timeToCook: 5
+  timeToCook: 2
   station: plating
   output: {fileID: 11400000, guid: f40d7b9af2de77e4ab7310b2edb81198, type: 2}

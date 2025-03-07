@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Cut Shrimp
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
   name: Shrimp
+=======
+  name: Chop Shrimp
+>>>>>>> Stashed changes
   inputIngredients:
   - {fileID: 11400000, guid: 2064cd170371a5b4fac2ede5fde37bb8, type: 2}
   output: {fileID: 11400000, guid: e58c362cbc75c554caabee4135cc793a, type: 2}

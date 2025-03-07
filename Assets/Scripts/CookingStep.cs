@@ -12,8 +12,13 @@ public class CookingStep : ScriptableObject
 
     public void ProcessCookingStep(CookingManager testScript, string currentStation)
     {
+<<<<<<< Updated upstream
         if (currentStation != requiredStation) 
         { 
+=======
+        if (currentStation != requiredStation)
+        {
+>>>>>>> Stashed changes
             Debug.LogWarning("Wrong station!");
             return;
         }

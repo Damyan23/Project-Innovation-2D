@@ -59,7 +59,7 @@ public class CustomerManager : MonoBehaviour
             float timeLeft = TimePerRequest - (Time.time - req.startTime);
             if(timeLeft <= 0)
             {
-                Debug.LogError("You Fucking Died");
+                Debug.LogError("You Lose!");
                 EditorApplication.isPaused = true;
             }
 
@@ -83,58 +83,16 @@ public class CustomerManager : MonoBehaviour
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
         recipeObjects.Add(recipeObject);
 
-
         // Set the recipe name (TMP Text) and the timer
         Transform topPart = recipeObject.transform.Find("Top");
-        //TMP_Text recipeNameText = topPart.GetComponentInChildren<TMP_Text>();
-        //recipeNameText.text = recipe.name;
 
         Image timerImage = topPart.GetComponentInChildren<Image>();
         timerImage.fillAmount = 1f;
-
-        //ingredientsContainer = recipeObject.transform.Find("Content");
-
-        //foreach (Ingredient ingredient in recipe.ingredients)
-        //{
-        //    CookingStep step = GetCookingStepFromIngredient(ingredient);
-        //    if (step != null)
-        //    {
-        //        DisplayCookingStep(step);
-        //    }
-        //}
 
         return recipeObject;
         
     }
 
-
-    CookingStep GetCookingStepFromIngredient(Ingredient ingredient)
-    {
-        CookingStep[] allSteps = Resources.LoadAll<CookingStep>("CookingSteps");
-
-        foreach(CookingStep step in allSteps)
-        {
-            if(step.output.ingredientName == ingredient.ingredientName)
-            {
-                return step;
-            }
-        }
-
-        return null;
-    }
-
-
-
-    // Function to display an ingredient
-    private void DisplayCookingStep(CookingStep step)
-    {
-        // Instantiate an ingredient prefab
-        GameObject ingredientObject = Instantiate(ingredientPrefab, ingredientsContainer);
-
-        //TODO: Add support for multiple input ingredients
-        Image inputIcon = ingredientObject.GetComponentInChildren<Image>();
-        inputIcon.sprite = step.inputIngredients[0].icon;        
-    }
 
     public void FinishDish(Dish dish)
     {

@@ -112,7 +112,7 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
-        Debug.Log (isCookingRecipe);
+        //Debug.Log(isCookingRecipe);
         if (spawnedIngredient != null && isCookingRecipe)
         {
             cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("knife");

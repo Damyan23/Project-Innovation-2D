@@ -206,7 +206,7 @@ public class CookingManager : MonoBehaviour
         if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
 
-       FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
+       //FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
     }
 
     private NetworkBehaviour FindLocalPlayer()
