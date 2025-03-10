@@ -94,11 +94,13 @@ public class PhoneInput : NetworkBehaviour
 
             //DebugData ();
 
-        if (Input.GetKeyDown(KeyCode.F) && !isServer && isLocalPlayer)
-        {
-            SendKnifeDetection();
-            Debug.Log("Knife thingy");
-        }
+        // if (Input.GetKeyDown(KeyCode.F) && !isServer && isLocalPlayer)
+        // {
+        //     SendKnifeDetection();
+        //     Debug.Log("Knife thingy");
+        // }
+
+        if (!isServer && isLocalPlayer) DetectKnifeMotion ();
 
         //if (GameManager.instance.isCookingRecipe) { DetectKnifeMotion();  }
         //if (!isServer) DetectKnifeMotion();
@@ -141,8 +143,6 @@ public class PhoneInput : NetworkBehaviour
             SendKnifeDetection ();
             Debug.Log ("Detected knife motion");
         }
-
-        
 
         lastAcceleration = acceleration;
         lastGyroRotation = gyroRotation;

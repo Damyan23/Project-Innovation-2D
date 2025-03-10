@@ -34,7 +34,8 @@ public class CookingManager : MonoBehaviour
     [HideInInspector] public bool canServe;
 
     CustomerManager customerManager;
-
+    
+    private Ingredient[] ingredients;
 
     void Start()
     {
@@ -54,6 +55,8 @@ public class CookingManager : MonoBehaviour
         finishedDish = null;
         isCookingRecipe = false;
         canServe = false;
+        
+        ingredients = Resources.LoadAll<Ingredient>("Ingredients");
     }
 
 
@@ -184,6 +187,42 @@ public class CookingManager : MonoBehaviour
 
         inventoryItems.Add(inventoryItem);
         inventory.Add(ingredient);
+    }
+
+    public void AddIngredient(string ingredientName)
+    {
+        Ingredient ingredient = null;
+
+        foreach (Ingredient ing in ingredients)
+        {
+            if (ing.name == ingredientName)
+            {
+                ingredient = ing;
+                break;  // Add this to exit the loop when found
+            }
+        }
+        
+        if (ingredient == null)
+        {
+            Debug.LogError($"Could not find ingredient with name: {ingredientName}");
+            return;
+        }
+
+        GameObject inventoryItem = Instantiate(inventoryItemPrefab, inventoryParent);
+        inventoryItem.GetComponent<Image>().sprite = ingredient.icon;
+        inventoryItem.GetComponent<InventoryItem>().ingredient = ingredient;
+        inventoryItem.GetComponent<InventoryItem>().manager = this;
+
+        Transform child = inventoryItem.transform.GetChild(0);
+        child.GetComponent<TMP_Text>().text = ingredient.name;
+
+        inventoryItems.Add(inventoryItem);
+        inventory.Add(ingredient);
+    }
+
+    public void ResetCookingOutput ()
+    {
+        FindLocalPlayer ().GetComponent<NetworkEventManager> ().ResetCookingOutput ();
     }
 
     public void RemoveIngredient(Ingredient ingredient)

@@ -927,12 +927,14 @@ MonoBehaviour:
   playerStartedGame: 0
   dataBase: {fileID: 0}
   eventManager: {fileID: 0}
-  allInredients: []
+  allIngredients: []
   ingredientPrefab: {fileID: 0}
   isCookingRecipe: 0
   cookingManager: {fileID: 0}
-  boilingStationIngredients: []
+  boilingStationCookingSteps: []
   currentStation: 
+  cookingOutputName: 
+  delay: 1
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
@@ -978,8 +980,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingInventory:
   - {fileID: 11400000, guid: 3678dc907b10b494d9d65afdee4dcbe3, type: 2}
+  - {fileID: 11400000, guid: 94730c203b65eb243b506c7826364155, type: 2}
+  - {fileID: 11400000, guid: 0ccc434cab846484eb1b70c1748bc4a3, type: 2}
+  - {fileID: 11400000, guid: e58c362cbc75c554caabee4135cc793a, type: 2}
   inventory: []
-  currentStation: knife
+  currentStation: soup
   finishedDish: {fileID: 0}
   wantedDishes: []
   cookingStepPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}

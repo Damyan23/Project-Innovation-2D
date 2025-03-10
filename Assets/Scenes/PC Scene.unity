@@ -1021,7 +1021,8 @@ MonoBehaviour:
   isCookingRecipe: 0
   cookingManager: {fileID: 0}
   boilingStationCookingSteps: []
-  currentStation: 
+  currentStation: soup
+  cookingOutputName: 
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0

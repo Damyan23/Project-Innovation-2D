@@ -30,13 +30,15 @@ public class GameManager : NetworkBehaviour
 
     public string currentStation;
 
-    private Dictionary<string, GameObject> instantiatedIngredients = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> instantiatedIngredients;
 
     [HideInInspector] public string cookingOutputName;
 
+    [SerializeField] private float delay = 1;
+
     [SerializeField] private Slider slider;
 
-    private const int CutsNeeded = 5;
+    private const int CutsNeeded = 1;
     private int currentCuts = 0;
 
     private void Awake()
@@ -49,6 +51,8 @@ public class GameManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+
+        instantiatedIngredients = new ();
 
         allIngredients = Resources.LoadAll <Ingredient> ("Ingredients");
 
@@ -116,7 +120,7 @@ public class GameManager : NetworkBehaviour
 
                 // Ensure the object has a RectTransform component
                 RectTransform rectTransform = instantiatedObj.GetComponent<RectTransform>();
-
+                instantiatedIngredients.Add (ingredientName, instantiatedObj);
                 if (rectTransform != null)
                 {
                     // Center the object inside its parent
@@ -148,9 +152,7 @@ public class GameManager : NetworkBehaviour
         //Debug.Log(isCookingRecipe);
         if (spawnedIngredient != null && isCookingRecipe)
         {
-            
             isCookingRecipe = false;
-            UpdateVariableInClient (false);
             Debug.Log ("cooking ingridient called:");
         }
     } 
@@ -167,7 +169,6 @@ public class GameManager : NetworkBehaviour
         if(currentCuts >= CutsNeeded)
         {
             FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
-            Debug.Log (cookingOutputName);
             StartCoroutine(WaitForOutputStepName());
             slider.value = 0;
         }
@@ -208,7 +209,6 @@ public class GameManager : NetworkBehaviour
         {
             // Update the ingredient UI with the new ingredient
             UpdateIngredientUI(foundIngredient);
-            cookingOutputName = "";
             isCookingRecipe = false;
         }
         else
@@ -217,21 +217,28 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+
+    private string ingredientName;
     private void UpdateIngredientUI(Ingredient newIngredient)
     {
-        // Destroy all currently spawned ingredients
-        foreach (var instantiatedIngredient in instantiatedIngredients.Values)
-        {
-            Destroy(instantiatedIngredient);
-        }
-
-        // Clear the dictionary of instantiated ingredients
-        instantiatedIngredients.Clear();
-
         // Instantiate the new ingredient
         GameObject instantiatedObj = Instantiate(ingredientPrefab, GameObject.Find("Placement UI").transform);
         Image prefabSprite = instantiatedObj.GetComponent<Image>();
         prefabSprite.sprite = newIngredient.icon;
+
+        foreach (Ingredient ingredient in allIngredients)
+        {
+            foreach (string ingredientName in instantiatedIngredients.Keys)
+            {
+                if (ingredient.name == ingredientName)
+                {
+                    Destroy(instantiatedIngredients[ingredientName]);
+                }
+            }
+        }
+        instantiatedIngredients.Clear ();
+
+        instantiatedIngredients.Add (cookingOutputName, instantiatedObj);
 
         // Ensure the object has a RectTransform component
         RectTransform rectTransform = instantiatedObj.GetComponent<RectTransform>();
@@ -247,9 +254,34 @@ public class GameManager : NetworkBehaviour
             rectTransform.sizeDelta = GameObject.Find("Placement UI").GetComponent<RectTransform>().sizeDelta;
         }
 
-        // Store the instantiated object
-        instantiatedIngredients[newIngredient.name] = instantiatedObj;
+        StartCoroutine (SendIngredientToInventory ());
     }
+
+  private bool isSendingToInventory = false; // Flag to prevent multiple calls
+
+    private IEnumerator SendIngredientToInventory()
+    {
+        if (isSendingToInventory) yield break; // Prevent duplicate execution
+        isSendingToInventory = true; // Set flag to true
+
+        yield return new WaitForSeconds(delay);
+
+        Debug.Log(cookingOutputName);
+
+        if (!string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.ContainsKey(cookingOutputName))
+        {
+            Debug.Log("Ingredient contained in dictionary");
+            FindLocalPlayer().GetComponent<NetworkEventManager>().SendIngredientToInventory(cookingOutputName);
+            Destroy(instantiatedIngredients[cookingOutputName]); // Fixed ingredientName reference
+            instantiatedIngredients.Clear();
+        }
+        else
+        {
+            Debug.LogWarning("Tried to send an ingredient to inventory but no valid ingredientName was found!");
+        }
+
+        isSendingToInventory = false; // Reset flag after execution
+}
 
 
     private NetworkBehaviour FindLocalPlayer()
@@ -266,9 +298,6 @@ public class GameManager : NetworkBehaviour
         return null;
     }
 
-    void UpdateVariableInClient (bool variable)
-    {
-        //NetworkEventManager.instance.UpdateVariableInClinet (variable);
-    }
+    
 
 }

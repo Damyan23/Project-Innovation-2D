@@ -79,6 +79,20 @@ public class NetworkEventManager : NetworkBehaviour
         GameManager.instance.cookingOutputName = stepOutputName;
     }
 
+    [ClientRpc]
+    public void SendIngredientToInventory (string outPutName)
+    {
+        if (isServer) return;
+
+        GameManager.instance.cookingManager.AddIngredient (outPutName);
+    }
+
+    [Command]
+    public void ResetCookingOutput ()
+    {
+        GameManager.instance.cookingOutputName = "";
+    }
+
     // [TargetRpc, Command]
     // public void UpdateVariableInClinet (bool variable)   
     // {
