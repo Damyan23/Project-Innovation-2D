@@ -52,11 +52,7 @@ public class GameManager : NetworkBehaviour
 
         allIngredients = Resources.LoadAll <Ingredient> ("Ingredients");
 
-        if (isServer)
-        {
-            slider.maxValue = CutsNeeded;
-            slider.value = 0;
-        }
+       
         cookRecipeEvent += CookRecipe;
     }
 
@@ -69,6 +65,13 @@ public class GameManager : NetworkBehaviour
         if (eventManager != null)
         {
             eventManager.startGameEvent += () => playerStartedGame = true;
+        }
+
+        if (isServer)
+        {
+            currentCuts = 0;
+            slider.maxValue = CutsNeeded;
+            slider.value = 0;
         }
     }
 

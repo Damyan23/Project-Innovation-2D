@@ -26,7 +26,8 @@ public class CustomerManager : MonoBehaviour
     private bool waitingForCustomer;
     private const float TimePerRequest = 40f;
     private float timeLeft;
-    [HideInInspector] public TMP_Text levelTimer;
+    
+    [SerializeField] private TMP_Text levelTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -46,8 +47,7 @@ public class CustomerManager : MonoBehaviour
         timeLeft -= Time.deltaTime;
         if(timeLeft <= 0)
         {
-            Debug.LogError("You Fucking Died");
-            EditorApplication.isPaused = true;
+            Debug.Log("You Fucking Died");
         }
         levelTimer.text = Mathf.RoundToInt(timeLeft).ToString();
 
@@ -59,8 +59,7 @@ public class CustomerManager : MonoBehaviour
             float timeLeft = TimePerRequest - (Time.time - req.startTime);
             if(timeLeft <= 0)
             {
-                Debug.LogError("You Lose!");
-                EditorApplication.isPaused = true;
+                Debug.Log("You Lose!");
             }
 
             obj.transform.Find("Top").GetComponentInChildren<Image>().fillAmount =  timeLeft / TimePerRequest;
