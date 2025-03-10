@@ -32,11 +32,11 @@ public class StationManagerPc : MonoBehaviour
 
         if (currentIndex == 0)
         {
-            GameManager.instance.currentStation = "Cutting";
+            GameManager.instance.currentStation = "knife";
         }
         else if (currentIndex == 1)
         {
-            GameManager.instance.currentStation = "Boiling";
+            GameManager.instance.currentStation = "soup";
         }
     }
 

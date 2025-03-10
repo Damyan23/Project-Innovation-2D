@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4603cb08e6b82a4eb0d5e9e87bd9455, type: 3}
   m_Name: Cut Mushroom
   m_EditorClassIdentifier: 
-  ingredientName: Cut Mushroom
+  name: Cut Mushroom
   icon: {fileID: -1278579755, guid: 3cb29d11f90ed5246a30bf23b6864f17, type: 3}
   isInfinite: 0

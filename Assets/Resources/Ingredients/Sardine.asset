@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4603cb08e6b82a4eb0d5e9e87bd9455, type: 3}
   m_Name: Sardine
   m_EditorClassIdentifier: 
-  ingredientName: Sardine
+  name: Sardine
   icon: {fileID: -543685714, guid: 3b9a0ee477db9d041aebd2443ce6cf19, type: 3}
   isInfinite: 1

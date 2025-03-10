@@ -106,7 +106,7 @@ public class PhoneInput : NetworkBehaviour
         //           $"Magnetometer: {magnetometer}");
     }
 
-    [Command]
+    [Command (requiresAuthority = false)]
     void SendKnifeDetection ()
     {
         GameManager.instance.cookRecipeEvent?.Invoke();

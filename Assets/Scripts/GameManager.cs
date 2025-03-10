@@ -14,7 +14,7 @@ public class GameManager : NetworkBehaviour
     [HideInInspector] public EventManager eventManager;
 
     // List of all ingredient data (Assign in Inspector)
-    public List<CookingStep> allCookingSteps;
+    public Ingredient[] allIngredients;
 
     // Prefab to instantiate (Assign in Inspector)
     public GameObject ingredientPrefab;
@@ -24,8 +24,13 @@ public class GameManager : NetworkBehaviour
 
     [HideInInspector] public CookingManager cookingManager;
 
+    [HideInInspector] public List<CookingStep> boilingStationCookingSteps;
+
     public string currentStation;
 
+    private Dictionary<string, GameObject> instantiatedIngredients = new Dictionary<string, GameObject>();
+
+    [HideInInspector] public string cookingOutputName;
     private void Awake()
     {
         if (instance == null)
@@ -36,13 +41,18 @@ public class GameManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+
+        allIngredients = Resources.LoadAll <Ingredient> ("Ingredients");
+
+
+        cookRecipeEvent += CookRecipe;
     }
 
     private void OnEnable()
     {
         dataBase = GetComponent<RecipeDataBase>();
         eventManager = GetComponent<EventManager>();
-        cookingManager = gameObject?.GetComponent<CookingManager>();
+        cookingManager = GetComponent<CookingManager>();
 
         if (eventManager != null)
         {
@@ -50,7 +60,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public void InstantiateIngredientById(string ingredientId)
+    public void InstantiateIngredientById(List<string> ingredientNames)
     {
         // Find the active "Placement UI" object
         GameObject placementUI = GameObject.Find("Placement UI");
@@ -62,52 +72,60 @@ public class GameManager : NetworkBehaviour
             return;
         }
 
-        foreach (CookingStep cookingStep in allCookingSteps)
+        foreach (string ingredientName in ingredientNames)
         {
-            if (cookingStep.name == ingredientId)
+            // Check if we already instantiated this ingredient
+            if (instantiatedIngredients.ContainsKey(ingredientName))
             {
-                // Instantiate the prefab as a child of Placement UI
-                spawnedIngredient = Instantiate(ingredientPrefab, placementUI.transform);
+                Debug.Log($"Ingredient {ingredientName} is already instantiated. Skipping.");
+                continue;
+            }
 
-                // Assign the CookingStep data
-                CookingStepHolder stepHolder = spawnedIngredient.GetComponent<CookingStepHolder>();
-                if (stepHolder != null)
+            // Find the ingredient in allIngredients
+            Ingredient foundIngredient = null;
+            foreach (Ingredient ingredient in allIngredients)
+            {
+                if (ingredient.name == ingredientName)
                 {
-                    stepHolder.cookingStep = cookingStep;
-                    stepHolder.AssignSprite();
+                    foundIngredient = ingredient;
+                    break;
+                }
+            }
+
+            // If ingredient was found, instantiate it
+            if (foundIngredient != null)
+            {
+                GameObject instantiatedObj = Instantiate(ingredientPrefab, placementUI.transform);
+                Image prefabSprite = instantiatedObj.GetComponent<Image>();
+                prefabSprite.sprite = foundIngredient.icon;
+
+                // Ensure the object has a RectTransform component
+                RectTransform rectTransform = instantiatedObj.GetComponent<RectTransform>();
+
+                if (rectTransform != null)
+                {
+                    // Center the object inside its parent
+                    rectTransform.anchoredPosition = Vector2.zero; // Set position to (0,0)
+                    rectTransform.anchorMin = new Vector2(0.5f, 0.5f); // Center anchor
+                    rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                    rectTransform.pivot = new Vector2(0.5f, 0.5f); // Set pivot to center
+
+                    // Optionally match the parent's size
+                    rectTransform.sizeDelta = placementUI.GetComponent<RectTransform>().sizeDelta;
                 }
                 else
                 {
-                    Debug.LogWarning("CookingStepHolder component not found on prefab!");
+                    Debug.LogWarning("RectTransform missing on instantiated object!");
                 }
 
-                // Get RectTransform components
-                RectTransform spawnedRect = spawnedIngredient.GetComponent<RectTransform>();
-                RectTransform placementRect = placementUI.GetComponent<RectTransform>();
-
-                if (spawnedRect != null && placementRect != null)
-                {
-                    // Match the size of Placement UI
-                    spawnedRect.sizeDelta = placementRect.sizeDelta;
-
-                    // Set anchors to the center of the parent
-                    spawnedRect.anchorMin = new Vector2(0.5f, 0.5f);
-                    spawnedRect.anchorMax = new Vector2(0.5f, 0.5f);
-                    spawnedRect.pivot = new Vector2(0.5f, 0.5f);
-
-                    // Set position to the center of the parent
-                    spawnedRect.anchoredPosition = Vector2.zero;
-                }
-                else
-                {
-                    Debug.LogWarning("RectTransform missing on either spawned object or Placement UI!");
-                }
-
-                return; // Stop the loop after spawning
+                // Store the instantiated object
+                instantiatedIngredients[ingredientName] = instantiatedObj;
+            }
+            else
+            {
+                Debug.LogWarning($"Ingredient {ingredientName} not found in allIngredients!");
             }
         }
-
-        Debug.LogWarning($"Ingredient with ID '{ingredientId}' not found!");
     }
 
     void Update()
@@ -115,18 +133,114 @@ public class GameManager : NetworkBehaviour
         //Debug.Log(isCookingRecipe);
         if (spawnedIngredient != null && isCookingRecipe)
         {
-            cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("knife");
-            // if (currentStation == "Cutting") 
-            // if (currentStation == "Boiling") cookRecipeEvent += () => spawnedIngredient.GetComponent<CookingStepHolder>().StartCooking("Boiling");
+            
             isCookingRecipe = false;
             UpdateVariableInClient (false);
             Debug.Log ("cooking ingridient called:");
         }
     } 
 
+    void CookRecipe()
+    {
+        FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
+        Debug.Log (cookingOutputName);
+        StartCoroutine(WaitForOutputStepName());
+    }
+
+    private IEnumerator WaitForOutputStepName()
+    {
+        // Wait for a maximum of 5 seconds (you can adjust this time)
+        float waitTime = 5f;
+        float timeElapsed = 0f;
+
+        // Keep checking if outputStepName is empty
+        while (string.IsNullOrEmpty(cookingOutputName))
+        {
+            timeElapsed += Time.deltaTime;
+            if (timeElapsed > waitTime)
+            {
+                Debug.LogWarning("Output step name not received in time. Aborting.");
+                yield break; // Exit the coroutine if time exceeds the limit
+            }
+
+            yield return null; // Wait for the next frame
+        }
+
+        // Now loop through all ingredients to find the one corresponding to the outputStepName
+        Ingredient foundIngredient = null;
+        foreach (Ingredient ingredient in allIngredients)
+        {
+            if (ingredient.name == cookingOutputName)
+            {
+                foundIngredient = ingredient;
+                break;
+            }
+        }
+
+        if (foundIngredient != null)
+        {
+            // Update the ingredient UI with the new ingredient
+            UpdateIngredientUI(foundIngredient);
+            cookingOutputName = "";
+        }
+        else
+        {
+            Debug.LogWarning($"Ingredient matching outputStepName '{cookingOutputName}' not found!");
+        }
+    }
+
+    private void UpdateIngredientUI(Ingredient newIngredient)
+    {
+        // Destroy all currently spawned ingredients
+        foreach (var instantiatedIngredient in instantiatedIngredients.Values)
+        {
+            Destroy(instantiatedIngredient);
+        }
+
+        // Clear the dictionary of instantiated ingredients
+        instantiatedIngredients.Clear();
+
+        // Instantiate the new ingredient
+        GameObject instantiatedObj = Instantiate(ingredientPrefab, GameObject.Find("Placement UI").transform);
+        Image prefabSprite = instantiatedObj.GetComponent<Image>();
+        prefabSprite.sprite = newIngredient.icon;
+
+        // Ensure the object has a RectTransform component
+        RectTransform rectTransform = instantiatedObj.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            // Center the object inside its parent
+            rectTransform.anchoredPosition = Vector2.zero; // Set position to (0,0)
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f); // Center anchor
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f); // Set pivot to center
+
+            // Optionally match the parent's size
+            rectTransform.sizeDelta = GameObject.Find("Placement UI").GetComponent<RectTransform>().sizeDelta;
+        }
+
+        // Store the instantiated object
+        instantiatedIngredients[newIngredient.name] = instantiatedObj;
+    }
+
+
+    private NetworkBehaviour FindLocalPlayer()
+    {
+        NetworkBehaviour[] allNetworkBehaviours = FindObjectsOfType<NetworkBehaviour>();
+        foreach (var netBehaviour in allNetworkBehaviours)
+        {
+            if (netBehaviour.isLocalPlayer)
+            {
+                return netBehaviour;
+            }
+        }
+        
+        return null;
+    }
+
     void UpdateVariableInClient (bool variable)
     {
-        NetworkEventManager.instance.UpdateVariableInClinet (variable);
+        //NetworkEventManager.instance.UpdateVariableInClinet (variable);
     }
 
 }

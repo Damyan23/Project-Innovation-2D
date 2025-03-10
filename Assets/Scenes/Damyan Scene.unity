@@ -927,10 +927,11 @@ MonoBehaviour:
   playerStartedGame: 0
   dataBase: {fileID: 0}
   eventManager: {fileID: 0}
-  allCookingSteps: []
+  allInredients: []
   ingredientPrefab: {fileID: 0}
   isCookingRecipe: 0
   cookingManager: {fileID: 0}
+  boilingStationIngredients: []
   currentStation: 
 --- !u!4 &1010039769
 Transform:
@@ -977,7 +978,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingInventory:
   - {fileID: 11400000, guid: 3678dc907b10b494d9d65afdee4dcbe3, type: 2}
-  - {fileID: 11400000, guid: 86c9c8d574edc97459eb07a6de11558d, type: 2}
   inventory: []
   currentStation: knife
   finishedDish: {fileID: 0}

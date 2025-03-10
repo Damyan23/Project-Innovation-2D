@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewIngredient", menuName = "Cooking/Ingredient")]
 public class Ingredient : ScriptableObject
 {
-    public string ingredientName;
+    new public string name;
     public Sprite icon;
     public bool isInfinite;    
     

@@ -16,4 +16,4 @@ MonoBehaviour:
   inputIngredients:
   - {fileID: 11400000, guid: 3678dc907b10b494d9d65afdee4dcbe3, type: 2}
   output: {fileID: 11400000, guid: a368538477f7f004f9e87ac14a4a19c1, type: 2}
-  requiredStation: Cutting
+  requiredStation: knife

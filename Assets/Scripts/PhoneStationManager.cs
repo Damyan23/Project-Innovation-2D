@@ -53,7 +53,7 @@ public class PhoneStationManager : MonoBehaviour
         if (GameManager.instance.playerStartedGame && !GameManager.instance.isCookingRecipe)
         {
             GameManager.instance.isCookingRecipe = true;
-            NetworkEventManager.instance.UpdateVariableInClinet (true);
+            //NetworkEventManager.instance.UpdateVariableInClinet (true);
         }
     }
 

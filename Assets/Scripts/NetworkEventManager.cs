@@ -3,6 +3,7 @@ using Mirror;
 using Microsoft.Unity.VisualStudio.Editor;
 using Unity.VisualScripting;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class NetworkEventManager : NetworkBehaviour
 {
@@ -12,6 +13,10 @@ public class NetworkEventManager : NetworkBehaviour
     public delegate void ButtonEventHandler(string buttonFunc);
     public static event ButtonEventHandler OnButtonPressed;
     public GameObject idk;
+
+    private string currentstation;
+
+    [HideInInspector] public string outputStepName;
 
     private void Awake()
     {
@@ -41,29 +46,44 @@ public class NetworkEventManager : NetworkBehaviour
     }
 
     [Command] 
-    public void CmdSpawnIngridient(string ingredient)
+    public void CmdSendSelectedIngredients(List<string >ingredients)
     {
         // GameObject ingridient = prefab;
         // ingridient.GetComponent<InventoryItem> ().ingredient = ingredient;
         // ingridient.GetComponent<UnityEngine.UI.Image> ().sprite = ingredient.icon;        
 
-        GameManager.instance.InstantiateIngredientById (ingredient);
+        GameManager.instance.InstantiateIngredientById (ingredients);
     }
 
+    // Get output name from here so that current station can be set from the game manager in server. If it is said from TargetRequestCookingStepOutput () 
+    // its gonna try to get it from the client side game manager
+    public string RequestCookingStepOutput ()
+    {
+        currentstation = GameManager.instance.currentStation;
+        TargetRequestCookingStepOutput ();
+        return outputStepName;
+    }
     
-    [TargetRpc]
-    public void SendCookedIngredient (Ingredient output, string currentStation)
+    [ClientRpc]
+    void TargetRequestCookingStepOutput()
     {
-        GameManager.instance.cookingManager.selectedIngredients[currentStation].Clear();
-        GameManager.instance.cookingManager.AddIngredient(output);
-        Debug.Log ("added ingredient");
+        if (isServer) return;
+        //GameManager.instance.cookingManager.currentStation = currentstation;
+        GameManager.instance.cookingManager.GetValidCookingStepName ();
     }
 
-    [TargetRpc, Command]
-    public void UpdateVariableInClinet (bool variable)
+    [Command]
+    public void CmdSetOutputStepName(string stepOutputName)
     {
-        GameManager.instance.isCookingRecipe = variable;
+        // Set the output step name on the server (or on the NetworkManager)
+        GameManager.instance.cookingOutputName = stepOutputName;
     }
+
+    // [TargetRpc, Command]
+    // public void UpdateVariableInClinet (bool variable)   
+    // {
+    //     GameManager.instance.isCookingRecipe = variable;
+    // }
 
 
 

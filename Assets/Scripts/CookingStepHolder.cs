@@ -9,7 +9,7 @@ public class CookingStepHolder : MonoBehaviour
     public CookingStep cookingStep; // Assign in Inspector or dynamically
     private Image stepImage;
     private CookingManager cookingManager;
-    private string currentStation;
+    [HideInInspector] public string currentStation;
     public float delay = 1.0f;
 
     private void Start()
@@ -65,9 +65,9 @@ public class CookingStepHolder : MonoBehaviour
     private void ProcessCookingStep()
     {
         // All ingredients are in inventory
-        NetworkEventManager.instance.SendCookedIngredient (cookingStep.output, currentStation);
+        //NetworkEventManager.instance.SendCookedIngredient (cookingStep.output, currentStation);
         Destroy (gameObject);
 
-        Debug.Log("Created " + cookingStep.output.ingredientName);
+        Debug.Log("Created " + cookingStep.output.name);
     }
 }

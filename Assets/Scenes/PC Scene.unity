@@ -1016,12 +1016,11 @@ MonoBehaviour:
   playerStartedGame: 0
   dataBase: {fileID: 0}
   eventManager: {fileID: 0}
-  allCookingSteps:
-  - {fileID: 11400000, guid: 907e31f5552790f46b74abc089f97099, type: 2}
-  - {fileID: 11400000, guid: 5ec92f4fbccb30e40b5cc0c4dc5e1438, type: 2}
-  ingredientPrefab: {fileID: 5817562598805391740, guid: f88e3b6b23b8e0549ab69447ef3157ff, type: 3}
+  allIngredients: []
+  ingredientPrefab: {fileID: 139342744596974200, guid: 062762be54a72d8468432f42061bc02a, type: 3}
   isCookingRecipe: 0
   cookingManager: {fileID: 0}
+  boilingStationCookingSteps: []
   currentStation: 
 --- !u!4 &1010039769
 Transform:
@@ -1087,6 +1086,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   idk: {fileID: 0}
+  outputStepName: 
 --- !u!1 &1116354818
 GameObject:
   m_ObjectHideFlags: 0

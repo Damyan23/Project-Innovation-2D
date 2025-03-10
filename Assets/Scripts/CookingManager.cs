@@ -3,15 +3,16 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 using Mirror;
+using Mirror.BouncyCastle.Utilities;
+using Unity.VisualScripting;
 
 public class CookingManager : MonoBehaviour
 {
     [Header("Inventory debug Stuff")]
     public List<Ingredient> startingInventory;
     public List<Ingredient> inventory;
-    public string currentStation = "cutting";
+    public string currentStation = "knife";
 
     [Header("Recipe Debug Stuff")]
     [HideInInspector] public Dish finishedDish;
@@ -89,6 +90,7 @@ public class CookingManager : MonoBehaviour
     public void TryProcessIngredient()
     {
         List<CookingStep> available = GetAvailableSteps(selectedIngredients[currentStation], currentStation);
+        Debug.Log (available);
 
         foreach (CookingStep step in available)
         {
@@ -177,7 +179,7 @@ public class CookingManager : MonoBehaviour
         inventoryItem.GetComponent<InventoryItem>().manager = this;
 
         Transform child = inventoryItem.transform.GetChild(0);
-        child.GetComponent<TMP_Text>().text = ingredient.ingredientName;
+        child.GetComponent<TMP_Text>().text = ingredient.name;
 
         inventoryItems.Add(inventoryItem);
         inventory.Add(ingredient);
@@ -206,7 +208,21 @@ public class CookingManager : MonoBehaviour
         if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
 
-       //FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSpawnIngridient (item.ingredient.name);
+        
+
+       FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSendSelectedIngredients (getSelectedIngredientsNames ());
+    }
+
+    List<string> getSelectedIngredientsNames ()
+    {
+        List<string> ingredientNames = new List<string> ();
+
+        foreach (Ingredient ingredient in selectedIngredients[currentStation])
+        {
+            if (!ingredientNames.Contains (ingredient.name)) ingredientNames.Add (ingredient.name);
+        }
+
+        return ingredientNames;
     }
 
     private NetworkBehaviour FindLocalPlayer()
@@ -223,15 +239,14 @@ public class CookingManager : MonoBehaviour
         return null;
     }
 
-    //Dont look at this function tbh
     bool IsValidCookingStep(List<Ingredient> ingredients, CookingStep step)
     {
         if (ingredients.Count == step.inputIngredients.Count)
         {
             //Sort the lists and then compare them (ChatGPT)
             //This makes sure the ingredients are correct regardless of order of selecting them
-            bool areEqual = ingredients.Select(obj => obj.ingredientName).OrderBy(x => x)
-                .SequenceEqual(step.inputIngredients.Select(obj => obj.ingredientName).OrderBy(x => x));
+            bool areEqual = ingredients.Select(obj => obj.name).OrderBy(x => x)
+                .SequenceEqual(step.inputIngredients.Select(obj => obj.name).OrderBy(x => x));
 
             return areEqual;
         }
@@ -241,14 +256,61 @@ public class CookingManager : MonoBehaviour
         }
     }
 
+    public void GetValidCookingStepName()
+    {
+        // Load all cooking steps from the "CookingSteps" resource folder
+        CookingStep[] cookingSteps = Resources.LoadAll<CookingStep>("CookingSteps");
+
+        List<Ingredient> currentSelectedIngredients = selectedIngredients[currentStation];
+
+        foreach (CookingStep step in cookingSteps)
+        {
+            if (currentSelectedIngredients.Count == step.inputIngredients.Count)
+            {
+                // Check if the ingredients match, regardless of order
+                bool areEqual = currentSelectedIngredients.Select(obj => obj.name).OrderBy(x => x)
+                    .SequenceEqual(step.inputIngredients.Select(obj => obj.name).OrderBy(x => x));
+                if (areEqual)
+                {
+                    CmdSetOutputStepName(step.output.name);
+                    Debug.Log ("are equal");
+                }
+            }
+        }
+    }
+
+    void CmdSetOutputStepName(string stepOutputName)
+    {
+        // Set the output step name on the server (or on the NetworkManager)
+        NetworkEventManager.instance.CmdSetOutputStepName (stepOutputName);
+    }
+
+
+    public string GetValidRecipeOutput(List<Ingredient> ingredients, CookingStep step)
+    {
+        if (ingredients.Count == step.inputIngredients.Count)
+        {
+            //Sort the lists and then compare them (ChatGPT)
+            //This makes sure the ingredients are correct regardless of order of selecting them
+            bool areEqual = ingredients.Select(obj => obj.name).OrderBy(x => x)
+                .SequenceEqual(step.inputIngredients.Select(obj => obj.name).OrderBy(x => x));
+            
+            if (!areEqual) { return null; }
+
+            return step.output.name;
+        }
+
+        return null;
+    }
+
     bool IsValidRecipe(List<Ingredient> ingredients, Recipe recipe)
     {
         if (ingredients.Count == recipe.ingredients.Count)
         {
             //Sort the lists and then compare them (ChatGPT)
             //This makes sure the ingredients are correct regardless of order of selecting them
-            bool areEqual = ingredients.Select(obj => obj.ingredientName).OrderBy(x => x)
-                .SequenceEqual(recipe.ingredients.Select(obj => obj.ingredientName).OrderBy(x => x));
+            bool areEqual = ingredients.Select(obj => obj.name).OrderBy(x => x)
+                .SequenceEqual(recipe.ingredients.Select(obj => obj.name).OrderBy(x => x));
 
             return areEqual;
         }
