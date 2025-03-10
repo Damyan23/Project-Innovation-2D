@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Damyan Scene.unity
     guid: 07b134e8e85c42e4e94fa5f58b0ec4d7
+  - enabled: 1
+    path: Assets/Scenes/PC Jasper.unity
+    guid: 1157fa30d3d8488418eeddaf7c05f3fb
   m_configObjects: {}

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using Mirror.BouncyCastle.Security;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
@@ -31,6 +33,12 @@ public class GameManager : NetworkBehaviour
     private Dictionary<string, GameObject> instantiatedIngredients = new Dictionary<string, GameObject>();
 
     [HideInInspector] public string cookingOutputName;
+
+    [SerializeField] private Slider slider;
+
+    private const int CutsNeeded = 5;
+    private int currentCuts = 0;
+
     private void Awake()
     {
         if (instance == null)
@@ -44,7 +52,11 @@ public class GameManager : NetworkBehaviour
 
         allIngredients = Resources.LoadAll <Ingredient> ("Ingredients");
 
-
+        if (isServer)
+        {
+            slider.maxValue = CutsNeeded;
+            slider.value = 0;
+        }
         cookRecipeEvent += CookRecipe;
     }
 
@@ -142,9 +154,21 @@ public class GameManager : NetworkBehaviour
 
     void CookRecipe()
     {
-        FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
-        Debug.Log (cookingOutputName);
-        StartCoroutine(WaitForOutputStepName());
+        if (isCookingRecipe)
+        {
+            currentCuts++;
+
+            slider.value = currentCuts;
+        }
+
+        if(currentCuts >= CutsNeeded)
+        {
+            FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
+            Debug.Log (cookingOutputName);
+            StartCoroutine(WaitForOutputStepName());
+            slider.value = 0;
+        }
+
     }
 
     private IEnumerator WaitForOutputStepName()
@@ -182,6 +206,7 @@ public class GameManager : NetworkBehaviour
             // Update the ingredient UI with the new ingredient
             UpdateIngredientUI(foundIngredient);
             cookingOutputName = "";
+            isCookingRecipe = false;
         }
         else
         {

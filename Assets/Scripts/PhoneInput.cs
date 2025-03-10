@@ -92,9 +92,16 @@ public class PhoneInput : NetworkBehaviour
         Vector2 touchPos = Vector2.zero;
         //CmdSendInput(touchPos, accelerometer, gyroRotation, magnetometer);
 
-        //DebugData ();
+            //DebugData ();
 
-        if (GameManager.instance.isCookingRecipe) { DetectKnifeMotion (); }
+        if (Input.GetKeyDown(KeyCode.F) && !isServer && isLocalPlayer)
+        {
+            SendKnifeDetection();
+            Debug.Log("Knife thingy");
+        }
+
+        //if (GameManager.instance.isCookingRecipe) { DetectKnifeMotion();  }
+        //if (!isServer) DetectKnifeMotion();
     }
 
     void DebugData ()
@@ -134,6 +141,8 @@ public class PhoneInput : NetworkBehaviour
             SendKnifeDetection ();
             Debug.Log ("Detected knife motion");
         }
+
+        
 
         lastAcceleration = acceleration;
         lastGyroRotation = gyroRotation;

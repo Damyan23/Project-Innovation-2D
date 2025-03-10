@@ -67,17 +67,17 @@ public class CookingManager : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (currentStation == "plating")
-            {
-                TryPlateDish();
-            }
-            else
-            {
-                TryProcessIngredient();
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    if (currentStation == "plating")
+        //    {
+        //        TryPlateDish();
+        //    }
+        //    else
+        //    {
+        //        TryProcessIngredient();
+        //    }
+        //}
         if (Input.GetKeyDown(KeyCode.E))
         {
             if(currentStation == "plating")
@@ -154,6 +154,7 @@ public class CookingManager : MonoBehaviour
 
     bool CheckRequiredIngedients(List<Ingredient> inventory, CookingStep step)
     {
+
         foreach (Ingredient ingredient in step.inputIngredients)
         {
             if (!inventory.Contains(ingredient)) return false;
