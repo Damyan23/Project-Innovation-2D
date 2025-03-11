@@ -41,6 +41,8 @@ public class GameManager : NetworkBehaviour
     private const int CutsNeeded = 1;
     private int currentCuts = 0;
 
+    [HideInInspector] public Action<string> OnCurrentStationChanged;
+
     private void Awake()
     {
         if (instance == null)
@@ -153,7 +155,6 @@ public class GameManager : NetworkBehaviour
         if (spawnedIngredient != null && isCookingRecipe)
         {
             isCookingRecipe = false;
-            Debug.Log ("cooking ingridient called:");
         }
     } 
 

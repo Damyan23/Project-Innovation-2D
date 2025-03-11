@@ -12,7 +12,7 @@ public class CookingManager : MonoBehaviour
     [Header("Inventory debug Stuff")]
     public List<Ingredient> startingInventory;
     public List<Ingredient> inventory;
-    public string currentStation = "knife";
+    [SerializeField] public string currentStation;
 
     [Header("Recipe Debug Stuff")]
     [HideInInspector] public Dish finishedDish;
@@ -69,6 +69,7 @@ public class CookingManager : MonoBehaviour
             TrashIngredients();
         }
 
+        Debug.Log (currentStation);
 
         //if (Input.GetKeyDown(KeyCode.F))
         //{
@@ -247,8 +248,6 @@ public class CookingManager : MonoBehaviour
 
         if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
-
-        
 
        FindLocalPlayer().GetComponent<NetworkEventManager>().CmdSendSelectedIngredients (getSelectedIngredientsNames ());
     }

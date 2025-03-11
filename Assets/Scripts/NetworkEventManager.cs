@@ -18,6 +18,30 @@ public class NetworkEventManager : NetworkBehaviour
 
     [HideInInspector] public string outputStepName;
 
+    void OnEnable()
+    {
+       GameManager.instance.OnCurrentStationChanged += (station) =>
+        {
+            if (isServer)
+            {
+                ClientUpdateCurrentStation(station);
+            }
+        };
+    }
+
+    void OnDisable()
+    {
+        if (!isServer) return;
+
+        GameManager.instance.OnCurrentStationChanged -= (station) =>
+        {
+            if (isServer)
+            {
+                ClientUpdateCurrentStation(station);
+            }
+        };
+    }
+
     private void Awake()
     {
         instance = this;
@@ -91,6 +115,14 @@ public class NetworkEventManager : NetworkBehaviour
     public void ResetCookingOutput ()
     {
         GameManager.instance.cookingOutputName = "";
+    }
+
+    [ClientRpc]
+    public void ClientUpdateCurrentStation (string station)
+    {
+        if (isServer) return;
+
+        GameManager.instance.cookingManager.currentStation = station;
     }
 
     // [TargetRpc, Command]

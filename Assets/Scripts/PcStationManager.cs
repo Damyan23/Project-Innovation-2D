@@ -29,31 +29,17 @@ public class StationManagerPc : MonoBehaviour
 
             if (startScreen.activeSelf) startScreen.SetActive(false);
         }
-
-        if (currentIndex == 0)
-        {
-            GameManager.instance.currentStation = "knife";
-        }
-        else if (currentIndex == 1)
-        {
-            GameManager.instance.currentStation = "soup";
-        }
     }
 
     void InitializeStations()
     {
-        // Disable all stations first
-        foreach (var station in stations)
-        {
-            station.SetActive(false);
-        }
+        foreach (var station in stations) station.SetActive(false);
 
-        // Enable the first station
         if (stations.Length > 0)
         {
             stations[0].SetActive(true);
             currentIndex = 0;
-            Debug.Log("Game started, showing kutting station");
+            UpdateCurrentStation();
         }
     }
 
@@ -73,21 +59,32 @@ public class StationManagerPc : MonoBehaviour
 
     void ShowNextImage()
     {
-        stations[currentIndex].SetActive(false); // Disable current station
-
-        // Move to the next index, loop back if needed
+        stations[currentIndex].SetActive(false);
         currentIndex = (currentIndex + 1) % stations.Length;
-
-        stations[currentIndex].SetActive(true); // Enable new station
+        stations[currentIndex].SetActive(true);
+        UpdateCurrentStation(); // Invoke event
     }
 
     void ShowPreviousImage()
     {
-        stations[currentIndex].SetActive(false); // Disable current station
-
-        // Move to the previous index, loop to the last if needed
+        stations[currentIndex].SetActive(false);
         currentIndex = (currentIndex - 1 + stations.Length) % stations.Length;
+        stations[currentIndex].SetActive(true);
+        UpdateCurrentStation(); // Invoke event
+    }
 
-        stations[currentIndex].SetActive(true); // Enable new station
+    void UpdateCurrentStation()
+    {
+        string stationName = currentIndex switch
+        {
+            0 => "knife",
+            1 => "plating",
+            2 => "soup",
+            _ => "unknown"
+        };
+
+
+        GameManager.instance.currentStation = stationName;
+        GameManager.instance.OnCurrentStationChanged?.Invoke(stationName); // Invoke the event
     }
 }
