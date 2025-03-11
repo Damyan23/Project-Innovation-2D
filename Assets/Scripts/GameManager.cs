@@ -42,6 +42,7 @@ public class GameManager : NetworkBehaviour
     private int currentCuts = 0;
 
     [HideInInspector] public Action<string> OnCurrentStationChanged;
+    private bool isSendingToInventory = false; // Flag to prevent multiple calls
 
     private void Awake()
     {
@@ -164,14 +165,14 @@ public class GameManager : NetworkBehaviour
         {
             currentCuts++;
 
-            slider.value = currentCuts;
+            //slider.value = currentCuts;
         }
 
         if(currentCuts >= CutsNeeded)
         {
             FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
             StartCoroutine(WaitForOutputStepName());
-            slider.value = 0;
+            //slider.value = 0;
         }
 
     }
@@ -218,8 +219,6 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-
-    private string ingredientName;
     private void UpdateIngredientUI(Ingredient newIngredient)
     {
         // Instantiate the new ingredient
@@ -258,7 +257,6 @@ public class GameManager : NetworkBehaviour
         StartCoroutine (SendIngredientToInventory ());
     }
 
-  private bool isSendingToInventory = false; // Flag to prevent multiple calls
 
     private IEnumerator SendIngredientToInventory()
     {
@@ -282,7 +280,9 @@ public class GameManager : NetworkBehaviour
         }
 
         isSendingToInventory = false; // Reset flag after execution
-}
+
+        cookingOutputName = "";
+    }
 
 
     private NetworkBehaviour FindLocalPlayer()

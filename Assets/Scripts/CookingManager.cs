@@ -219,6 +219,8 @@ public class CookingManager : MonoBehaviour
 
         inventoryItems.Add(inventoryItem);
         inventory.Add(ingredient);
+
+        selectedIngredients[currentStation].Clear ();
     }
 
     public void ResetCookingOutput ()
