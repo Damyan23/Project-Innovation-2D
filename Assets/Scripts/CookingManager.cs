@@ -107,20 +107,20 @@ public class CookingManager : MonoBehaviour
         }
     }
 
-    public void TryPlateDish()
-    {
-        Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
+    // public void TryPlateDish()
+    // {
+    //     Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
 
-        foreach (Recipe recipe in recipes)
-        {
-            if (IsValidRecipe(selectedIngredients[currentStation], recipe))
-            {
-                StartCoroutine(recipe.StartMakingRecipe(this));
-                selectedIngredients[currentStation].Clear();
-                return;
-            }
-        }
-    }
+    //     foreach (Recipe recipe in recipes)
+    //     {
+    //         if (IsValidRecipe(selectedIngredients[currentStation], recipe))
+    //         {
+    //             StartCoroutine(recipe.StartMakingRecipe(this));
+    //             selectedIngredients[currentStation].Clear();
+    //             return;
+    //         }
+    //     }
+    // }
     private void TryServePlate()
     {
         if (canServe && finishedDish != null)
@@ -344,21 +344,21 @@ public class CookingManager : MonoBehaviour
         return null;
     }
 
-    bool IsValidRecipe(List<Ingredient> ingredients, Recipe recipe)
-    {
-        if (ingredients.Count == recipe.ingredients.Count)
-        {
-            //Sort the lists and then compare them (ChatGPT)
-            //This makes sure the ingredients are correct regardless of order of selecting them
-            bool areEqual = ingredients.Select(obj => obj.name).OrderBy(x => x)
-                .SequenceEqual(recipe.ingredients.Select(obj => obj.name).OrderBy(x => x));
+    // bool IsValidRecipe(List<Ingredient> ingredients, Recipe recipe)
+    // {
+    //     if (ingredients.Count == recipe.ingredients.Count)
+    //     {
+    //         //Sort the lists and then compare them (ChatGPT)
+    //         //This makes sure the ingredients are correct regardless of order of selecting them
+    //         bool areEqual = ingredients.Select(obj => obj.name).OrderBy(x => x)
+    //             .SequenceEqual(recipe.ingredients.Select(obj => obj.name).OrderBy(x => x));
 
-            return areEqual;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    //         return areEqual;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
 
 }

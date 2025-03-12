@@ -12,8 +12,6 @@ public class NetworkEventManager : NetworkBehaviour
     // Define a delegate for handling button events
     public delegate void ButtonEventHandler(string buttonFunc);
     public static event ButtonEventHandler OnButtonPressed;
-    public GameObject idk;
-
     private string currentstation;
 
     [HideInInspector] public string outputStepName;
@@ -124,7 +122,6 @@ public class NetworkEventManager : NetworkBehaviour
 
         GameManager.instance.cookingManager.currentStation = station;
     }
-
     // [TargetRpc, Command]
     // public void UpdateVariableInClinet (bool variable)   
     // {

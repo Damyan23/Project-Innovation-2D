@@ -5,22 +5,17 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Rendering;
 using UnityEditor;
+using System.Runtime.CompilerServices;
 
 public class CustomerManager : MonoBehaviour
 {
     private RecipeDataBase dataBase;
     private List<Recipe> recipes = new List<Recipe>();
-
     // Prefabs to instantiate
     [SerializeField] private GameObject recipePrefab;  // The prefab for the whole recipe
     [SerializeField] private Transform recipeContainer; // The container where the recipe prefab will be instantiated
-
-    [SerializeField] private GameObject ingredientPrefab;  // The prefab for the ingredients
-    private Transform ingredientsContainer; // The container where the ingredients will be added
-
-    private List<GameObject> recipeObjects;
-
-    [HideInInspector] public List<CustomerRequest> requests;
+    private List<GameObject> recipeObjects = new List<GameObject>(); // List to store the instantiated recipe prefabs
+    [HideInInspector] public List<CustomerRequest> requests = new List<CustomerRequest>();
 
 
     private bool waitingForCustomer;
@@ -32,9 +27,6 @@ public class CustomerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        requests = new();
-        recipeObjects = new();
-
         dataBase = GameManager.instance.dataBase;
         recipes = dataBase.recipes;
         waitingForCustomer = false;
@@ -76,10 +68,13 @@ public class CustomerManager : MonoBehaviour
     }
 
     // Function to display the recipe
-    private GameObject DisplayRecipe(Recipe recipe)
+    private GameObject DisplayRecipe(Sprite recipe)
     {
+        //Create new game object add a sprite to it and make it the recipe sprite then instantiate it
+
         // Instantiate the recipe prefab
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
+        recipeObject.GetComponent<Image>().sprite = recipe;
         recipeObjects.Add(recipeObject);
 
         // Set the recipe name (TMP Text) and the timer
@@ -89,7 +84,6 @@ public class CustomerManager : MonoBehaviour
         timerImage.fillAmount = 1f;
 
         return recipeObject;
-        
     }
 
 
@@ -99,7 +93,41 @@ public class CustomerManager : MonoBehaviour
 
         foreach(CustomerRequest req in requests)
         {
-            if(req.wantedDish.dishName == dish.dishName)
+            if(req.wantedDish.name == dish.ingredient.name)
+            {
+                //Serve the oldest request first
+                if(requestToFill == null || req.startTime < requestToFill.startTime)
+                {
+                    requestToFill = req;
+                }
+            }
+        }
+
+        //No correct request can be filled
+        if (requestToFill == null)
+        {
+            Debug.LogWarning("Wrong Dish!");
+            return;
+        }
+
+        Destroy(requestToFill.requestObject);
+        requests.Remove(requestToFill);
+
+        timeLeft += 20f;
+            
+        Debug.Log("Served A Correct Dish!");
+        
+    }
+
+    public void FinishDish(string dishName)
+    {
+        CustomerRequest requestToFill = null;
+        Debug.Log (requests.Count);
+
+        foreach(CustomerRequest req in requests)
+        {
+            Debug.Log (req.wantedDish.name);
+            if(req.wantedDish.name == dishName)
             {
                 //Serve the oldest request first
                 if(requestToFill == null || req.startTime < requestToFill.startTime)
@@ -127,17 +155,21 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator AddNewRequest(int waitingTimeSeconds)
     {
+        Debug.Log("AddNewRequest started");
         waitingForCustomer = true;
         yield return new WaitForSeconds(waitingTimeSeconds);
+        Debug.Log("After waiting");
 
         // Get a random index
         int randomIndex = Random.Range(0, recipes.Count);
         Recipe randomRecipe = recipes[randomIndex];
+        Debug.Log("random recipe name: " + randomRecipe.output.name);
 
         // Create the request
-        CustomerRequest newRequest = new(randomRecipe.output, randomRecipe, Time.time, DisplayRecipe(randomRecipe));
+        CustomerRequest newRequest = new(randomRecipe.output, Time.time, DisplayRecipe(randomRecipe.icon));
         requests.Add(newRequest);
         recipeObjects.Add(newRequest.requestObject);
+        Debug.Log("Request added, requests.Count = " + requests.Count);
 
         waitingForCustomer = false;
     }

@@ -9,7 +9,7 @@ public class PhoneInput : NetworkBehaviour
     private Vector3 lastGyroRotation;
 
     private float lastMotionTime = 0f; // Prevents multiple detections
-    private float motionCooldown = 0.3f; // Time between detections
+    private float motionCooldown = 0.35f; // Time between detections
 
     private CookingManager cookingManager;
 
@@ -128,65 +128,37 @@ public class PhoneInput : NetworkBehaviour
     void SendMixingDetection()
     {
         GameManager.instance.cookRecipeEvent?.Invoke();
+        GameManager.instance.isCookingRecipe = true;
         Debug.Log("Sent mixing detection to server");
     }
-
-    private float lastZAcceleration = 0f;
-    private bool wasMovingRight = false;
-    private int rockingCount = 0;
-    private float rockingTimer = 0f;
 
     void DetectMixingMotion()
     {
         Vector3 acceleration = Input.acceleration;
         Vector3 gravity = Input.gyro.gravity;
-        
-        // Check if thin edge (width side) is pointing up
-        bool isWidthSideUp = Mathf.Abs(gravity.x) > 0.7f;
-        
-        if (isWidthSideUp)
+
+        // Check if the phone's long edge is pointing up (landscape mode)
+        bool isOnSide = Input.deviceOrientation == DeviceOrientation.LandscapeLeft || Input.deviceOrientation == DeviceOrientation.LandscapeRight;
+
+        // Detect left-right movement
+        float movementThreshold = 0.7f; // Adjust for sensitivity
+        bool isMovingRight = acceleration.x > movementThreshold;
+        bool isMovingLeft = acceleration.x < -movementThreshold;
+
+        // Check cooldown
+        if (Time.time - lastMotionTime < motionCooldown)
         {
-            // Track time for detecting rocking frequency
-            rockingTimer += Time.deltaTime;
-            
-            // Check for direction change in z-axis (left-right rocking)
-            bool isMovingRight = acceleration.z > 0.3f;
-            bool isMovingLeft = acceleration.z < -0.3f;
-            
-            // Detect change in direction (indicates rocking motion)
-            if ((isMovingRight && !wasMovingRight && lastZAcceleration < -0.2f) || 
-                (!isMovingRight && wasMovingRight && lastZAcceleration > 0.2f))
-            {
-                rockingCount++;
-                wasMovingRight = isMovingRight;
-            }
-            
-            // Reset detection if too much time passes
-            if (rockingTimer > 2.0f)
-            {
-                rockingTimer = 0f;
-                rockingCount = 0;
-            }
-            
-            // If we detect multiple direction changes within time window, it's a rocking motion
-            if (rockingCount >= 3)
-            {
-                SendMixingDetection();
-                Debug.Log("Detected stirring/mixing motion");
-                
-                // Reset after detection
-                rockingCount = 0;
-                rockingTimer = 0f;
-            }
-            
-            // Store current acceleration for next frame comparison
-            lastZAcceleration = acceleration.z;
+            return; // Exit if still in cooldown
         }
-        else
+
+        Debug.Log(Input.deviceOrientation);
+
+        if (isOnSide && (isMovingRight || isMovingLeft))
         {
-            // Reset when phone is not in correct orientation
-            rockingCount = 0;
-            rockingTimer = 0f;
+            SendMixingDetection();
+            Debug.Log("Detected mixing motion");
+
+            lastMotionTime = Time.time; // Update last detection time
         }
     }
 
@@ -194,21 +166,58 @@ public class PhoneInput : NetworkBehaviour
     void SendPlatingDetection()
     {
         GameManager.instance.cookRecipeEvent?.Invoke();
+        GameManager.instance.isCookingRecipe = true;
         Debug.Log("Sent plating detection to server");
     }
+
+    private bool wasLandscape = false;
+    private float platingStartTime = 0f;
 
     void DetectPlatingMotion()
     {
         Vector3 acceleration = Input.acceleration;
         Vector3 gravity = Input.gyro.gravity;
-
-        bool isFlat = gravity.z > 0.7f;
-        bool isTapping = Mathf.Abs(acceleration.y) > 0.5f;
-
-        if (isFlat && isTapping)
+        
+        // Check if phone is in landscape mode
+        bool isLandscape = Input.deviceOrientation == DeviceOrientation.LandscapeLeft || 
+                        Input.deviceOrientation == DeviceOrientation.LandscapeRight;
+        
+        // Check if screen is pointing upward (forward tilt)
+        // Using a more generous threshold to make it easier
+        bool isScreenUp = gravity.z < -0.4f;
+        
+        // Check cooldown
+        if (Time.time - lastMotionTime < motionCooldown)
+        {
+            return; // Exit if still in cooldown
+        }
+        
+        // Start tracking when in landscape
+        if (isLandscape && !wasLandscape)
+        {
+            wasLandscape = true;
+            platingStartTime = Time.time;
+        }
+        
+        // Detect plating motion - in landscape and screen tilts up
+        // Using a more generous time window of 1.5 seconds
+        if (wasLandscape && isLandscape && isScreenUp && 
+            (Time.time - platingStartTime < 1.5f))
         {
             SendPlatingDetection();
-            Debug.Log("Detected plating motion");
+            Debug.Log("Detected plating motion - landscape with forward tilt");
+            
+            // Reset detection state
+            wasLandscape = false;
+            lastMotionTime = Time.time;
+        }
+        
+        // Reset if we leave landscape mode or too much time passes
+        if ((!isLandscape && wasLandscape) || 
+            (wasLandscape && (Time.time - platingStartTime > 1.5f)))
+        {
+            wasLandscape = false;
         }
     }
+
 }

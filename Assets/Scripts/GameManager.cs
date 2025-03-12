@@ -38,12 +38,14 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private Slider slider;
 
-    private const int CutsNeeded = 1;
+    private const int CutsNeeded = 6;
     private int currentCuts = 0;
 
     [HideInInspector] public Action<string> OnCurrentStationChanged;
     private bool isSendingToInventory = false; // Flag to prevent multiple calls
 
+    [HideInInspector] public CustomerManager customerManager;
+    private string doneDishName;
     private void Awake()
     {
         if (instance == null)
@@ -68,6 +70,7 @@ public class GameManager : NetworkBehaviour
         dataBase = GetComponent<RecipeDataBase>();
         eventManager = GetComponent<EventManager>();
         cookingManager = GetComponent<CookingManager>();
+        customerManager = GetComponent <CustomerManager> ();
 
         if (eventManager != null)
         {
@@ -93,6 +96,8 @@ public class GameManager : NetworkBehaviour
             Debug.LogWarning("Placement UI not found or inactive!");
             return;
         }
+
+        if (currentStation == "plating" && ingredientNames.Count == 1) doneDishName = ingredientNames[0];
 
         foreach (string ingredientName in ingredientNames)
         {
@@ -161,20 +166,28 @@ public class GameManager : NetworkBehaviour
 
     void CookRecipe()
     {
-        if (isCookingRecipe)
+        if (currentStation != "plating")
         {
-            currentCuts++;
+            if (isCookingRecipe)
+            {
+                currentCuts++;
 
-            //slider.value = currentCuts;
+                //slider.value = currentCuts;
+            }
+
+            if(currentCuts >= CutsNeeded)
+            {
+                FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
+                StartCoroutine(WaitForOutputStepName());
+                //slider.value = 0;
+            }
         }
-
-        if(currentCuts >= CutsNeeded)
+        else
         {
-            FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
-            StartCoroutine(WaitForOutputStepName());
-            //slider.value = 0;
+            customerManager.FinishDish (doneDishName);
+            Destroy (instantiatedIngredients[doneDishName]);
+            doneDishName = "";
         }
-
     }
 
     private IEnumerator WaitForOutputStepName()
