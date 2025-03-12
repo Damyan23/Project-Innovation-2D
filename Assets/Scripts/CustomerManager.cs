@@ -39,7 +39,7 @@ public class CustomerManager : MonoBehaviour
         timeLeft -= Time.deltaTime;
         if(timeLeft <= 0)
         {
-            Debug.Log("You Fucking Died");
+            //Debug.Log("You Lose!");
         }
         levelTimer.text = Mathf.RoundToInt(timeLeft).ToString();
 
@@ -51,7 +51,7 @@ public class CustomerManager : MonoBehaviour
             float timeLeft = TimePerRequest - (Time.time - req.startTime);
             if(timeLeft <= 0)
             {
-                Debug.Log("You Lose!");
+                //Debug.Log("You Lose!");
             }
 
             obj.transform.Find("Top").GetComponentInChildren<Image>().fillAmount =  timeLeft / TimePerRequest;

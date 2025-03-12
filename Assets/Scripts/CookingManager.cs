@@ -69,7 +69,7 @@ public class CookingManager : MonoBehaviour
             TrashIngredients();
         }
 
-        Debug.Log (currentStation);
+        //Debug.Log (currentStation);
 
         //if (Input.GetKeyDown(KeyCode.F))
         //{
