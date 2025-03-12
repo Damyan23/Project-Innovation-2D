@@ -68,20 +68,26 @@ public class CustomerManager : MonoBehaviour
     }
 
     // Function to display the recipe
-    private GameObject DisplayRecipe(Sprite recipe)
+    private GameObject DisplayRecipe(Recipe recipe)
     {
         //Create new game object add a sprite to it and make it the recipe sprite then instantiate it
 
         // Instantiate the recipe prefab
         GameObject recipeObject = Instantiate(recipePrefab, recipeContainer);
-        recipeObject.GetComponent<Image>().sprite = recipe;
         recipeObjects.Add(recipeObject);
 
         // Set the recipe name (TMP Text) and the timer
-        Transform topPart = recipeObject.transform.Find("Top");
+        Transform content = recipeObject.transform.Find("Content");
+        content.GetComponent<Image>().sprite = recipe.icon;
 
+
+        Transform topPart = recipeObject.transform.Find("Top");
+        TMP_Text recipeName = topPart.GetComponentInChildren<TMP_Text>();
+        recipeName.text = recipe.name;
+        
         Image timerImage = topPart.GetComponentInChildren<Image>();
         timerImage.fillAmount = 1f;
+
 
         return recipeObject;
     }
@@ -166,7 +172,7 @@ public class CustomerManager : MonoBehaviour
         Debug.Log("random recipe name: " + randomRecipe.output.name);
 
         // Create the request
-        CustomerRequest newRequest = new(randomRecipe.output, Time.time, DisplayRecipe(randomRecipe.icon));
+        CustomerRequest newRequest = new(randomRecipe.output, Time.time, DisplayRecipe(randomRecipe));
         requests.Add(newRequest);
         recipeObjects.Add(newRequest.requestObject);
         Debug.Log("Request added, requests.Count = " + requests.Count);
