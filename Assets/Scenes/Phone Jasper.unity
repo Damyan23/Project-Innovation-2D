@@ -1450,6 +1450,7 @@ MonoBehaviour:
   cookingOutputName: 
   delay: 1
   slider: {fileID: 0}
+  customerManager: {fileID: 0}
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
@@ -1479,7 +1480,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recipePrefab: {fileID: 1304508429350557006, guid: c74d0aa05b58865458e657771393c991, type: 3}
   recipeContainer: {fileID: 1116354819}
-  ingredientPrefab: {fileID: 2467862862243766817, guid: dd982d29bf72c1a4e89521016e5979fa, type: 3}
   levelTimer: {fileID: 0}
 --- !u!114 &1010039771
 MonoBehaviour:
@@ -1494,10 +1494,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingInventory:
-  - {fileID: 11400000, guid: 3678dc907b10b494d9d65afdee4dcbe3, type: 2}
-  - {fileID: 11400000, guid: 94730c203b65eb243b506c7826364155, type: 2}
-  - {fileID: 11400000, guid: 0ccc434cab846484eb1b70c1748bc4a3, type: 2}
-  - {fileID: 11400000, guid: e58c362cbc75c554caabee4135cc793a, type: 2}
+  - {fileID: 11400000, guid: 876bc986238d7814cb7c9c680ad80035, type: 2}
+  - {fileID: 11400000, guid: 2064cd170371a5b4fac2ede5fde37bb8, type: 2}
+  - {fileID: 11400000, guid: 216956317f9304948bf4793db723261a, type: 2}
   inventory: []
   currentStation: soup
   finishedDish: {fileID: 0}

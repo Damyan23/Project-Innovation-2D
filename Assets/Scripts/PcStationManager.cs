@@ -77,9 +77,9 @@ public class StationManagerPc : MonoBehaviour
     {
         string stationName = currentIndex switch
         {
-            0 => "knife",
+            0 => "cutting",
             1 => "plating",
-            2 => "soup",
+            2 => "mixing",
             _ => "unknown"
         };
 

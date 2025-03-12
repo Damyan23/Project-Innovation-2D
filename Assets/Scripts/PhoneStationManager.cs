@@ -15,6 +15,11 @@ public class PhoneStationManager : MonoBehaviour
 
     private int currentIndex = 0; // Start at Knife Station (index 0)
 
+    private void OnEnable()
+    {
+        UpdateStationDisplay();
+    }
+
     public void OnButtonClick(string buttonFunc)
     {
         // Find the local player and send the event

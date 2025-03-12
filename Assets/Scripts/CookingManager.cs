@@ -46,7 +46,7 @@ public class CookingManager : MonoBehaviour
 
         selectedIngredients = new();
 
-        selectedIngredients.Add("knife", new());
+        selectedIngredients.Add("cutting", new());
         selectedIngredients.Add("soup", new());
         selectedIngredients.Add("plating", new());
 
@@ -246,7 +246,7 @@ public class CookingManager : MonoBehaviour
     public void SelectInventoryItem(InventoryItem item)
     {
         if (isCookingRecipe) return;
-        if (currentStation == "knife" && selectedIngredients["knife"].Count >= 1) return;
+        if (currentStation == "cutting" && selectedIngredients["cutting"].Count >= 1) return;
 
         if (!item.ingredient.isInfinite) RemoveIngredient(item.ingredient);
         selectedIngredients[currentStation].Add(item.ingredient);
@@ -314,7 +314,7 @@ public class CookingManager : MonoBehaviour
                 if (areEqual)
                 {
                     CmdSetOutputStepName(step.output.name);
-                    Debug.Log ("are equal");
+                    //Debug.Log ("are equal");
                 }
             }
         }

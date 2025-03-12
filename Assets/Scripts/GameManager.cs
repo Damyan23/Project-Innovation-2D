@@ -185,7 +185,7 @@ public class GameManager : NetworkBehaviour
             if (isCookingRecipe)
             {
                 currentCuts++;
-
+                Debug.Log(currentCuts);
                 //slider.value = currentCuts;
             }
 
