@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Cut Anglerfish
   m_EditorClassIdentifier: 
-  name: 
-  inputIngredients: []
-  output: {fileID: 0}
-  requiredStation: 
+  name: Anglerfish
+  inputIngredients:
+  - {fileID: 11400000, guid: f05ae0b17367ab04387bcefa157292cf, type: 2}
+  output: {fileID: 11400000, guid: edbd46cc4f74d664d88923615d02ff49, type: 2}
+  requiredStation: cutting

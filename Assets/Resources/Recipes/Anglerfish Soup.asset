@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55c4f55e6a04b1e4eab923cacdee73ce, type: 3}
   m_Name: Anglerfish Soup
   m_EditorClassIdentifier: 
-  icon: {fileID: 0}
-  output: {fileID: 0}
+  icon: {fileID: 21300000, guid: 3603a83bb6fa1574ab42c0bc1c621856, type: 3}
+  output: {fileID: 11400000, guid: cb64f3c81905c0d42b673173acd56060, type: 2}

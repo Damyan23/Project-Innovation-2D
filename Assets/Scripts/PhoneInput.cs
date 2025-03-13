@@ -76,6 +76,19 @@ public class PhoneInput : NetworkBehaviour
         if (!isServer && isLocalPlayer)
         {
             DetectMotion();
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                SendKnifeDetection();
+            }
+            else if(Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                SendMixingDetection();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                SendPlatingDetection();
+            }
         }
     }
 

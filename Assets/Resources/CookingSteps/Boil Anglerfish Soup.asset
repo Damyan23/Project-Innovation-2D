@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Boil Anglerfish Soup
   m_EditorClassIdentifier: 
-  name: 
-  inputIngredients: []
-  output: {fileID: 0}
-  requiredStation: 
+  name: Anglerfish Soup
+  inputIngredients:
+  - {fileID: 11400000, guid: edbd46cc4f74d664d88923615d02ff49, type: 2}
+  - {fileID: 11400000, guid: 46eb903f7175e8a4bbd42db908751122, type: 2}
+  - {fileID: 11400000, guid: 3ca909bdbf6e4a44798b665ce3b2c22d, type: 2}
+  output: {fileID: 11400000, guid: cb64f3c81905c0d42b673173acd56060, type: 2}
+  requiredStation: mixing

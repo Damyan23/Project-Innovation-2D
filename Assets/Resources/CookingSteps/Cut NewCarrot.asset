@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Cut NewCarrot
   m_EditorClassIdentifier: 
-  name: 
-  inputIngredients: []
-  output: {fileID: 0}
-  requiredStation: 
+  name: NewCarrot
+  inputIngredients:
+  - {fileID: 11400000, guid: 23e4e996b50894f4fa2de320ec43e231, type: 2}
+  output: {fileID: 11400000, guid: 46eb903f7175e8a4bbd42db908751122, type: 2}
+  requiredStation: cutting

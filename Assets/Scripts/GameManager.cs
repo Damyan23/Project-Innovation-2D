@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using Mirror.BouncyCastle.Asn1.BC;
 using Mirror.BouncyCastle.Security;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -34,7 +35,7 @@ public class GameManager : NetworkBehaviour
 
     [HideInInspector] public string cookingOutputName;
 
-    [SerializeField] private float delay = 1;
+    [SerializeField] private float delay = 2;
 
     [SerializeField] private Slider slider;
 
@@ -50,6 +51,11 @@ public class GameManager : NetworkBehaviour
 
     SoundManager soundManager;
     bool isBurnerOn = false;
+
+    [SerializeField] private GameObject tutorialSprite;
+    bool seenTutorial;
+
+    [SerializeField] private GameObject waterPot;
 
     private void Awake()
     {
@@ -81,13 +87,19 @@ public class GameManager : NetworkBehaviour
         popupTextManager = GetComponent <PopupTextManager> ();
         soundManager = GetComponent<SoundManager>();
 
+        seenTutorial = false;
+
         if (eventManager != null)
         {
-            eventManager.startGameEvent += () => playerStartedGame = true;
+            eventManager.startGameEvent += () =>
+            {
+                playerStartedGame = true;
+            };
         }
 
         OnCurrentStationChanged += ToggleProgressBar;
         OnCurrentStationChanged += StationSounds;
+        OnCurrentStationChanged += ToggleWaterPot;
 
         if(slider != null)
         {
@@ -101,6 +113,7 @@ public class GameManager : NetworkBehaviour
     {
         OnCurrentStationChanged -= ToggleProgressBar;
         OnCurrentStationChanged -= StationSounds;
+        OnCurrentStationChanged -= ToggleWaterPot;
     }
 
     public void InstantiateIngredientById(List<string> ingredientNames)
@@ -194,6 +207,11 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
+        if(!seenTutorial && playerStartedGame)
+        {
+            Destroy(tutorialSprite);
+            seenTutorial = true;
+        }
     } 
 
     void CookRecipe()
@@ -224,6 +242,7 @@ public class GameManager : NetworkBehaviour
                 StartCoroutine(WaitForOutputStepName());
                 slider.value = 0;
                 currentCuts = 0;
+                isCookingRecipe = false;
             }
         }
         else
@@ -250,6 +269,20 @@ public class GameManager : NetworkBehaviour
         soundManager.PlayTrashing();
 
         //cookingManager.selectedIngredients[currentStation].Clear();
+    }
+
+    void ToggleWaterPot(string station)
+    {
+        if (isServer) return;
+
+        if (station == "mixing")
+        {
+            waterPot.SetActive(true);
+        }
+        else
+        {
+            waterPot.SetActive(false);
+        }
     }
 
     private IEnumerator WaitForOutputStepName()
@@ -296,6 +329,8 @@ public class GameManager : NetworkBehaviour
 
     private void UpdateIngredientUI(Ingredient newIngredient)
     {
+        waterPot.SetActive(false);
+
         // Instantiate the new ingredient
         GameObject instantiatedObj = Instantiate(ingredientPrefab, GameObject.Find("Placement UI").transform);
         Image prefabSprite = instantiatedObj.GetComponent<Image>();
@@ -325,9 +360,19 @@ public class GameManager : NetworkBehaviour
             rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
             rectTransform.pivot = new Vector2(0.5f, 0.5f); // Set pivot to center
 
-            // Optionally match the parent's size
-            rectTransform.sizeDelta = GameObject.Find("Placement UI").GetComponent<RectTransform>().sizeDelta;
+            if(currentStation == "mixing")
+            {
+                RectTransform potRect = waterPot.GetComponent<RectTransform>();
+                rectTransform.position = potRect.position;
+                rectTransform.sizeDelta = potRect.sizeDelta;
+            }
+            else
+            {
+                // Optionally match the parent's size
+                rectTransform.sizeDelta = GameObject.Find("Placement UI").GetComponent<RectTransform>().sizeDelta;
+            }
         }
+
 
         StartCoroutine (SendIngredientToInventory ());
     }
@@ -351,6 +396,11 @@ public class GameManager : NetworkBehaviour
             Destroy(instantiatedIngredients[cookingOutputName]); // Fixed ingredientName reference
             instantiatedIngredients.Clear();
             soundManager.PlayInventorySwoosh();
+
+            if(currentStation == "mixing")
+            {
+                waterPot.SetActive(true);
+            }
         }
         else
         {

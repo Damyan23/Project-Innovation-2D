@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.Rendering;
 using UnityEditor;
 using System.Runtime.CompilerServices;
+using UnityEngine.SceneManagement;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -19,10 +20,11 @@ public class CustomerManager : MonoBehaviour
 
 
     private bool waitingForCustomer;
-    private const float TimePerRequest = 40f;
+    private const float TimePerRequest = 45f;
     private float timeLeft;
     
     [SerializeField] private TMP_Text levelTimer;
+    [SerializeField] private GameObject gameOverScreen;
 
     // Start is called before the first frame update
     void Start()
@@ -39,8 +41,9 @@ public class CustomerManager : MonoBehaviour
         timeLeft -= Time.deltaTime;
         if(timeLeft <= 0)
         {
-            //Debug.Log("You Lose!");
+            StartCoroutine(SendBackToMainMenu(7.5f));
         }
+
         levelTimer.text = Mathf.RoundToInt(timeLeft).ToString();
 
         AddRandomRecipe ();
@@ -58,12 +61,20 @@ public class CustomerManager : MonoBehaviour
 
             if(timeLeft <= 0)
             {
-                //Debug.Log("You Lose!");
+                StartCoroutine(SendBackToMainMenu(7.5f));
             }
 
             img.fillAmount =  timeLeft / TimePerRequest;
         }
     } 
+
+    private IEnumerator SendBackToMainMenu(float seconds)
+    {
+        gameOverScreen.SetActive(true);
+        yield return new WaitForSeconds(seconds);
+
+        SceneManager.LoadScene("Main Menu");
+    }
 
 
     public void AddRandomRecipe()
