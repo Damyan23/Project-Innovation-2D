@@ -1775,6 +1775,8 @@ MonoBehaviour:
   customerManager: {fileID: 0}
   popupTextManager: {fileID: 0}
   doneDishName: 
+  tutorialSprite: {fileID: 0}
+  waterPot: {fileID: 0}
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
@@ -1805,6 +1807,7 @@ MonoBehaviour:
   recipePrefab: {fileID: 1304508429350557006, guid: c74d0aa05b58865458e657771393c991, type: 3}
   recipeContainer: {fileID: 1116354819}
   levelTimer: {fileID: 0}
+  gameOverScreen: {fileID: 0}
 --- !u!114 &1010039771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1821,6 +1824,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 876bc986238d7814cb7c9c680ad80035, type: 2}
   - {fileID: 11400000, guid: 2064cd170371a5b4fac2ede5fde37bb8, type: 2}
   - {fileID: 11400000, guid: 216956317f9304948bf4793db723261a, type: 2}
+  - {fileID: 11400000, guid: 79270648a7640d140a3d83da69f75973, type: 2}
+  - {fileID: 11400000, guid: 23e4e996b50894f4fa2de320ec43e231, type: 2}
+  - {fileID: 11400000, guid: f05ae0b17367ab04387bcefa157292cf, type: 2}
+  - {fileID: 11400000, guid: c850892664354494e8737ba3d0250b44, type: 2}
+  - {fileID: 11400000, guid: a60f1bc39a197c04d8e56d24bd7c1f72, type: 2}
+  - {fileID: 11400000, guid: 754094976490d1a44940bcfcd91f69cc, type: 2}
   inventory: []
   currentStation: soup
   finishedDish: {fileID: 0}
@@ -1830,6 +1839,7 @@ MonoBehaviour:
   inventoryParent: {fileID: 449439925}
   isCookingRecipe: 0
   canServe: 0
+  dirtSoup: {fileID: 0}
 --- !u!114 &1010039772
 MonoBehaviour:
   m_ObjectHideFlags: 0
