@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Rendering;
-using UnityEditor;
-using System.Runtime.CompilerServices;
-using UnityEngine.SceneManagement;
+using Mirror;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -73,7 +70,8 @@ public class CustomerManager : MonoBehaviour
         gameOverScreen.SetActive(true);
         yield return new WaitForSeconds(seconds);
 
-        SceneManager.LoadScene("Main Menu");
+        NetworkManager.singleton.ServerChangeScene("Main Menu");
+        NetworkManager.singleton.StopHost();
     }
 
 
