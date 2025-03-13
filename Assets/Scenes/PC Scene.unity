@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &14671128
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1299,6 +1299,7 @@ MonoBehaviour:
   slider: {fileID: 0}
   customerManager: {fileID: 0}
   popupTextManager: {fileID: 0}
+  doneDishName: 
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0

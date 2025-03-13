@@ -28,7 +28,7 @@ public class CookingAnimator : MonoBehaviour
     private void OnCookRecipeEvent()
     {
 
-        if (string.IsNullOrEmpty(GameManager.instance.cookingOutputName) && string.IsNullOrEmpty (GameManager.instance.doneDishName)) return;
+        //if (string.IsNullOrEmpty(GameManager.instance.cookingOutputName) && string.IsNullOrEmpty (GameManager.instance.doneDishName)) return;
         // Find the active animator (the one whose parent is active)
         activeAnimator = GetActiveAnimator();
 
