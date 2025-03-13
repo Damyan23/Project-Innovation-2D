@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
+  m_Name: Cut Crab
+  m_EditorClassIdentifier: 
+  name: Crab
+  inputIngredients:
+  - {fileID: 11400000, guid: c850892664354494e8737ba3d0250b44, type: 2}
+  output: {fileID: 11400000, guid: f59b5642e0446d84aa8db1784c8ce74a, type: 2}
+  requiredStation: cutting
