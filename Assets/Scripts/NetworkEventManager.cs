@@ -133,5 +133,11 @@ public class NetworkEventManager : NetworkBehaviour
         GameManager.instance.TrashIngredients();
     }
 
+    [TargetRpc] // This makes sure it only runs on the client
+    public void RpcChangeSceneForClients(string sceneName)
+    {
+        if (isServer) return;
+        GameManager.instance.LoadScene(sceneName); // Change scene on the client
+    }
 
 }

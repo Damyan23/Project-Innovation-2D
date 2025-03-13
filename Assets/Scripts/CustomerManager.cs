@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -76,9 +77,11 @@ public class CustomerManager : MonoBehaviour
         gameOverScreen.SetActive(true);
         yield return new WaitForSeconds(seconds);
 
-        NetworkManager.singleton.ServerChangeScene("Main Menu");
-        NetworkManager.singleton.StopHost();
+
+        SceneManager.LoadScene ("Main Menu");
+        NetworkManager.singleton.StopHost(); // Stop host (server + client)
     }
+
 
 
     public void AddRandomRecipe()

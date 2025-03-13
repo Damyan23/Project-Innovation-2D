@@ -5,8 +5,10 @@ using Mirror;
 using Mirror.BouncyCastle.Asn1.BC;
 using Mirror.BouncyCastle.Security;
 using Unity.VisualScripting;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
@@ -443,6 +445,9 @@ public class GameManager : NetworkBehaviour
         return null;
     }
 
-    
+    public void LoadScene (string scene)
+    {
+        SceneManager.LoadScene (scene);
+    }
 
 }
