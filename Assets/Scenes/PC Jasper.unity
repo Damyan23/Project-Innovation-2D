@@ -1525,8 +1525,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animators:
   - {fileID: 284838242}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 787422788}
+  - {fileID: 795886963}
 --- !u!114 &1010039774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,9 +1540,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupTextContainers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 356310778}
+  - {fileID: 1032640621}
+  - {fileID: 733335251}
   textPrefab: {fileID: 5780530303991819965, guid: 5cb92738cc69fd348ae28a1a8376f11b, type: 3}
 --- !u!82 &1010039775
 AudioSource:

@@ -201,11 +201,10 @@ public class GameManager : NetworkBehaviour
 
         if (currentStation != "plating")
         {
-            if (isCookingRecipe)
+            if (isCookingRecipe && string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.Count > 0)
             {
                 currentCuts++;
-                Debug.Log(currentCuts);
-                //slider.value = currentCuts;
+                slider.value = currentCuts;
 
                 if (currentStation == "cutting")
                 {
@@ -219,11 +218,12 @@ public class GameManager : NetworkBehaviour
 
             }
 
-            if(currentCuts >= CutsNeeded)
+            if(currentCuts >= CutsNeeded && instantiatedIngredients.Count > 0)
             {
                 FindLocalPlayer().GetComponent<NetworkEventManager> ().RequestCookingStepOutput ();
                 StartCoroutine(WaitForOutputStepName());
-                //slider.value = 0;
+                slider.value = 0;
+                currentCuts = 0;
             }
         }
         else

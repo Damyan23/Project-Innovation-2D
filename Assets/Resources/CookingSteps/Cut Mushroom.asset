@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
   m_Name: Cut Mushroom
   m_EditorClassIdentifier: 
-  name: 
-  inputIngredients: []
-  output: {fileID: 0}
-  requiredStation: 
+  name: Mushroom
+  inputIngredients:
+  - {fileID: 11400000, guid: 216956317f9304948bf4793db723261a, type: 2}
+  output: {fileID: 11400000, guid: 94730c203b65eb243b506c7826364155, type: 2}
+  requiredStation: cutting

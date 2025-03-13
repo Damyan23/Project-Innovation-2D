@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using Unity.VisualScripting;
 
 public class PhoneInput : NetworkBehaviour
 {
@@ -12,6 +13,7 @@ public class PhoneInput : NetworkBehaviour
     private float motionCooldown = 0.35f; // Time between detections
 
     private CookingManager cookingManager;
+    private float platingStartTime = 0f;
 
     [Command(requiresAuthority = false)]
     void CmdSendInput(Vector2 touchPosition, Vector3 accelerometer, Vector3 gyroRotation, Vector3 magnetometer, NetworkConnectionToClient sender = null)
@@ -74,32 +76,19 @@ public class PhoneInput : NetworkBehaviour
         if (!isServer && isLocalPlayer)
         {
             DetectMotion();
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SendKnifeDetection();
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                SendMixingDetection();
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                SendPlatingDetection();
-            }
         }
     }
 
     void DetectMotion()
     {
         if (cookingManager == null) return;
-        
+
         switch (cookingManager.currentStation)
         {
-            case "knife":
+            case "cutting":
                 DetectKnifeMotion();
                 break;
-            case "soup":
+            case "mixing":
                 DetectMixingMotion();
                 break;
             case "plating":
@@ -122,19 +111,29 @@ public class PhoneInput : NetworkBehaviour
         Vector3 gyroRotation = Input.gyro.rotationRate;
         Vector3 gravity = Input.gyro.gravity;
 
-        bool isSideways = Mathf.Abs(gravity.x) > 0.7f;
-        bool isFastDownward = acceleration.z < -0.5f;
-        bool isFastUpward = acceleration.z > 0.5f;
-        bool isRotatingFast = Mathf.Abs(gyroRotation.y) > 1.5f;
+        bool isSideways = Mathf.Abs(gravity.y) > 0.7f;
+        bool isFastDownward = Mathf.Abs (acceleration.y) > 1.5f;
+        bool isRotatingFast = Mathf.Abs (gyroRotation.y) > 1.5f;
 
-        if (isSideways && (isFastDownward || isFastUpward) && isRotatingFast)
+
+        Debug.Log ("is sideways :" + isSideways);
+        Debug.Log ("is fast downward" + isFastDownward);
+        // Debug.Log ("is fast downward" + isFastDownward);
+        // Debug.Log (isRotatingFast);
+
+        // Check cooldown
+        if (Time.time - lastMotionTime < motionCooldown)
         {
-            SendKnifeDetection();
-            Debug.Log("Detected knife motion");
+            return; // Exit if still in cooldown
         }
 
-        lastAcceleration = acceleration;
-        lastGyroRotation = gyroRotation;
+
+        if (isSideways && isFastDownward)
+        {
+            SendKnifeDetection();
+            lastMotionTime = Time.time;
+            Debug.Log("Detected knife motion");
+        }
     }
 
     [Command(requiresAuthority = false)]
@@ -183,53 +182,27 @@ public class PhoneInput : NetworkBehaviour
         Debug.Log("Sent plating detection to server");
     }
 
-    private bool wasLandscape = false;
-    private float platingStartTime = 0f;
+
 
     void DetectPlatingMotion()
     {
         Vector3 acceleration = Input.acceleration;
         Vector3 gravity = Input.gyro.gravity;
         
-        // Check if phone is in landscape mode
-        bool isLandscape = Input.deviceOrientation == DeviceOrientation.LandscapeLeft || 
-                        Input.deviceOrientation == DeviceOrientation.LandscapeRight;
-        
-        // Check if screen is pointing upward (forward tilt)
-        // Using a more generous threshold to make it easier
-        bool isScreenUp = gravity.z < -0.4f;
-        
-        // Check cooldown
-        if (Time.time - lastMotionTime < motionCooldown)
-        {
-            return; // Exit if still in cooldown
-        }
-        
-        // Start tracking when in landscape
-        if (isLandscape && !wasLandscape)
-        {
-            wasLandscape = true;
-            platingStartTime = Time.time;
-        }
-        
+        bool isGoingDown = Mathf.Abs (acceleration.z) > 1.5f;
+        bool correctOrientation = Mathf.Abs (gravity.z) > 0.75;
+
+        Debug.Log ("is going down :" + isGoingDown);
+        Debug.Log ("correct orientation :" + correctOrientation);
+
         // Detect plating motion - in landscape and screen tilts up
         // Using a more generous time window of 1.5 seconds
-        if (wasLandscape && isLandscape && isScreenUp && 
-            (Time.time - platingStartTime < 1.5f))
+        if (isGoingDown && correctOrientation && (Time.time - platingStartTime > 1.5f))
         {
             SendPlatingDetection();
             Debug.Log("Detected plating motion - landscape with forward tilt");
             
-            // Reset detection state
-            wasLandscape = false;
-            lastMotionTime = Time.time;
-        }
-        
-        // Reset if we leave landscape mode or too much time passes
-        if ((!isLandscape && wasLandscape) || 
-            (wasLandscape && (Time.time - platingStartTime > 1.5f)))
-        {
-            wasLandscape = false;
+            platingStartTime = Time.time;
         }
     }
 
