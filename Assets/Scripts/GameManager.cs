@@ -302,11 +302,8 @@ public class GameManager : NetworkBehaviour
 
         yield return new WaitForSeconds(delay);
 
-<<<<<<< Updated upstream
         popupTextManager.ShowIngredientSentToInventory();
-=======
         //Debug.Log(cookingOutputName);
->>>>>>> Stashed changes
 
         if (!string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.ContainsKey(cookingOutputName))
         {

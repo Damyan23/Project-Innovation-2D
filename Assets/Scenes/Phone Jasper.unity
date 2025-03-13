@@ -1443,6 +1443,8 @@ MonoBehaviour:
   delay: 1
   slider: {fileID: 0}
   customerManager: {fileID: 0}
+  popupTextManager: {fileID: 0}
+  doneDishName: 
 --- !u!4 &1010039769
 Transform:
   m_ObjectHideFlags: 0
