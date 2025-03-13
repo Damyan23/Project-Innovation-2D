@@ -11,9 +11,14 @@ public class PhoneStationManager : MonoBehaviour
     [SerializeField] private Image rightIcon;  // Next station icon
 
     [SerializeField] private Sprite[] stationIcons;  // Array of station icons
-    [SerializeField] private Sprite[] stationFullImages; // Array of full station images
+    //[SerializeField] private Sprite[] stationFullImages; // Array of full station images
 
     private int currentIndex = 0; // Start at Knife Station (index 0)
+
+    private void OnEnable()
+    {
+        UpdateStationDisplay();
+    }
 
     public void OnButtonClick(string buttonFunc)
     {

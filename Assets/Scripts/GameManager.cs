@@ -66,6 +66,8 @@ public class GameManager : NetworkBehaviour
         cookRecipeEvent += CookRecipe;
     }
 
+    
+
     private void OnEnable()
     {
         dataBase = GetComponent<RecipeDataBase>();
@@ -79,12 +81,19 @@ public class GameManager : NetworkBehaviour
             eventManager.startGameEvent += () => playerStartedGame = true;
         }
 
-        if (isServer)
+        OnCurrentStationChanged += ToggleProgressBar;
+
+        if(slider != null)
         {
             currentCuts = 0;
             slider.maxValue = CutsNeeded;
             slider.value = 0;
         }
+    }
+
+    private void OnDisable()
+    {
+        OnCurrentStationChanged -= ToggleProgressBar;
     }
 
     public void InstantiateIngredientById(List<string> ingredientNames)
@@ -157,6 +166,11 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    void ToggleProgressBar(string station)
+    {
+        slider.gameObject.SetActive(station != "plating");
+    }
+
     void Update()
     {
     } 
@@ -168,7 +182,7 @@ public class GameManager : NetworkBehaviour
             if (isCookingRecipe)
             {
                 currentCuts++;
-
+                Debug.Log(currentCuts);
                 //slider.value = currentCuts;
             }
 

@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PC Jasper.unity
     guid: 1157fa30d3d8488418eeddaf7c05f3fb
+  - enabled: 1
+    path: Assets/Scenes/Phone Jasper.unity
+    guid: 0db8d2f260a82504aa16090ca16caedd
   m_configObjects: {}

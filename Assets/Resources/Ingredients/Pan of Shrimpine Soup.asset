@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Pan of Shrimpine Soup
   m_EditorClassIdentifier: 
   name: Pan of Shrimpine Soup
-  icon: {fileID: 21300000, guid: b69ac4f35ccd61c409e57ec7e0d15db5, type: 3}
+  icon: {fileID: 21300000, guid: 2a6c034ee4d41f74b888c7e95bea9702, type: 3}
   isInfinite: 0

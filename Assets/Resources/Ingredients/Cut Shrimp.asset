@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4603cb08e6b82a4eb0d5e9e87bd9455, type: 3}
   m_Name: Cut Shrimp
   m_EditorClassIdentifier: 
-  name: Cut Shrmip
+  name: Cut Shrimp
   icon: {fileID: 1722338387, guid: 33f83226eb69e7d4ea5f74dd7f2b6caf, type: 3}
   isInfinite: 0
