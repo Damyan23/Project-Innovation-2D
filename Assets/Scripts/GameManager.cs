@@ -201,6 +201,19 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public void TrashIngredients()
+    {
+        if (isServer) return;
+
+        foreach(var obj in instantiatedIngredients.Values)
+        {
+            Destroy(obj);
+        }
+
+        Debug.Log(cookingManager);
+        //cookingManager.selectedIngredients[currentStation].Clear();
+    }
+
     private IEnumerator WaitForOutputStepName()
     {
         // Wait for a maximum of 5 seconds (you can adjust this time)
@@ -289,7 +302,11 @@ public class GameManager : NetworkBehaviour
 
         yield return new WaitForSeconds(delay);
 
+<<<<<<< Updated upstream
         popupTextManager.ShowIngredientSentToInventory();
+=======
+        //Debug.Log(cookingOutputName);
+>>>>>>> Stashed changes
 
         if (!string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.ContainsKey(cookingOutputName))
         {
@@ -306,6 +323,7 @@ public class GameManager : NetworkBehaviour
 
         cookingOutputName = "";
     }
+
 
 
     private NetworkBehaviour FindLocalPlayer()

@@ -164,7 +164,7 @@ public class PhoneInput : NetworkBehaviour
             return; // Exit if still in cooldown
         }
 
-        Debug.Log(Input.deviceOrientation);
+        //Debug.Log(Input.deviceOrientation);
 
         if (isOnSide && (isMovingRight || isMovingLeft))
         {

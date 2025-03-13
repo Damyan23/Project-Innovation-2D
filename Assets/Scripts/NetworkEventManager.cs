@@ -127,6 +127,11 @@ public class NetworkEventManager : NetworkBehaviour
     //     GameManager.instance.isCookingRecipe = variable;
     // }
 
+    [Command]
+    public void TrashIngredients()
+    {
+        GameManager.instance.TrashIngredients();
+    }
 
 
 }

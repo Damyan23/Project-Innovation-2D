@@ -64,11 +64,6 @@ public class CookingManager : MonoBehaviour
     {
         if (isCookingRecipe) return;
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            TrashIngredients();
-        }
-
         //Debug.Log (currentStation);
 
         //if (Input.GetKeyDown(KeyCode.F))
@@ -149,11 +144,6 @@ public class CookingManager : MonoBehaviour
         }
 
         return availableSteps;
-    }
-
-    public void TrashIngredients()
-    {
-        selectedIngredients[currentStation].Clear();
     }
 
     bool CheckRequiredIngedients(List<Ingredient> inventory, CookingStep step)

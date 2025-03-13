@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using UnityEngine.UI; // Required for UI Image component
+using UnityEngine.UI;
+using UnityEngine.SceneManagement; // Required for UI Image component
 
 public class PhoneStationManager : MonoBehaviour
 {
@@ -18,6 +19,17 @@ public class PhoneStationManager : MonoBehaviour
     private void OnEnable()
     {
         UpdateStationDisplay();
+    }
+
+
+    public void HomeButton()
+    {
+        SceneManager.LoadScene("Main Menu");
+    }
+
+    public void TrashButton()
+    {
+        NetworkEventManager.instance.TrashIngredients();
     }
 
     public void OnButtonClick(string buttonFunc)
