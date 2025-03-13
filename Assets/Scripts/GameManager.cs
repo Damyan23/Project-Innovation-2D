@@ -47,6 +47,10 @@ public class GameManager : NetworkBehaviour
     [HideInInspector] public CustomerManager customerManager;
     [HideInInspector] public PopupTextManager popupTextManager;
     [HideInInspector] public string doneDishName;
+
+    SoundManager soundManager;
+    bool isBurnerOn = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -75,6 +79,7 @@ public class GameManager : NetworkBehaviour
         cookingManager = GetComponent<CookingManager>();
         customerManager = GetComponent <CustomerManager> ();
         popupTextManager = GetComponent <PopupTextManager> ();
+        soundManager = GetComponent<SoundManager>();
 
         if (eventManager != null)
         {
@@ -82,6 +87,7 @@ public class GameManager : NetworkBehaviour
         }
 
         OnCurrentStationChanged += ToggleProgressBar;
+        OnCurrentStationChanged += StationSounds;
 
         if(slider != null)
         {
@@ -94,6 +100,7 @@ public class GameManager : NetworkBehaviour
     private void OnDisable()
     {
         OnCurrentStationChanged -= ToggleProgressBar;
+        OnCurrentStationChanged -= StationSounds;
     }
 
     public void InstantiateIngredientById(List<string> ingredientNames)
@@ -140,6 +147,20 @@ public class GameManager : NetworkBehaviour
                 // Ensure the object has a RectTransform component
                 RectTransform rectTransform = instantiatedObj.GetComponent<RectTransform>();
                 instantiatedIngredients.Add (ingredientName, instantiatedObj);
+
+                if (currentStation == "plating")
+                {
+                    soundManager.PlayPlatingNoise();
+                }
+                else if(currentStation == "mixing")
+                {
+                    soundManager.PlayWaterSplash();
+                }
+                else
+                {
+                    soundManager.PlayItemPickup();
+                }
+
                 if (rectTransform != null)
                 {
                     // Center the object inside its parent
@@ -177,6 +198,7 @@ public class GameManager : NetworkBehaviour
 
     void CookRecipe()
     {
+
         if (currentStation != "plating")
         {
             if (isCookingRecipe)
@@ -184,6 +206,17 @@ public class GameManager : NetworkBehaviour
                 currentCuts++;
                 Debug.Log(currentCuts);
                 //slider.value = currentCuts;
+
+                if (currentStation == "cutting")
+                {
+                    soundManager.PlayCut();
+                }
+
+                if(currentStation == "mixing")
+                {
+                     soundManager.PlayMixing();
+                }
+
             }
 
             if(currentCuts >= CutsNeeded)
@@ -195,9 +228,13 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            // customerManager.FinishDish (doneDishName);
-            // Destroy (instantiatedIngredients[doneDishName]);
-            // doneDishName = "";
+            if (string.IsNullOrEmpty(doneDishName)) return;
+
+            customerManager.FinishDish(doneDishName);
+            Destroy(instantiatedIngredients[doneDishName]);
+            doneDishName = "";
+
+            soundManager.PlayOrderSent();
         }
     }
 
@@ -210,7 +247,8 @@ public class GameManager : NetworkBehaviour
             Destroy(obj);
         }
 
-        Debug.Log(cookingManager);
+        soundManager.PlayTrashing();
+
         //cookingManager.selectedIngredients[currentStation].Clear();
     }
 
@@ -300,6 +338,8 @@ public class GameManager : NetworkBehaviour
         if (isSendingToInventory) yield break; // Prevent duplicate execution
         isSendingToInventory = true; // Set flag to true
 
+        soundManager.PlayActionDone();
+
         yield return new WaitForSeconds(delay);
 
         popupTextManager.ShowIngredientSentToInventory();
@@ -310,6 +350,7 @@ public class GameManager : NetworkBehaviour
             FindLocalPlayer().GetComponent<NetworkEventManager>().SendIngredientToInventory(cookingOutputName);
             Destroy(instantiatedIngredients[cookingOutputName]); // Fixed ingredientName reference
             instantiatedIngredients.Clear();
+            soundManager.PlayInventorySwoosh();
         }
         else
         {
@@ -321,7 +362,22 @@ public class GameManager : NetworkBehaviour
         cookingOutputName = "";
     }
 
-
+    void StationSounds(string station)
+    {
+        if(station == "mixing")
+        {
+            soundManager.PlayBoilingWater(true);
+            if (!isBurnerOn)
+            {
+                soundManager.PlayBurnerClicks();
+                isBurnerOn = true;
+            }
+        }
+        else
+        {
+            soundManager.PlayBoilingWater(false);
+        }
+    }
 
     private NetworkBehaviour FindLocalPlayer()
     {

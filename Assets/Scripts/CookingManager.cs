@@ -47,7 +47,7 @@ public class CookingManager : MonoBehaviour
         selectedIngredients = new();
 
         selectedIngredients.Add("cutting", new());
-        selectedIngredients.Add("soup", new());
+        selectedIngredients.Add("mixing", new());
         selectedIngredients.Add("plating", new());
 
         DisplayInventory();

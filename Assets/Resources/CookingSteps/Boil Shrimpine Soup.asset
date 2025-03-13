@@ -18,4 +18,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e58c362cbc75c554caabee4135cc793a, type: 2}
   - {fileID: 11400000, guid: 94730c203b65eb243b506c7826364155, type: 2}
   output: {fileID: 11400000, guid: 69c6e9e91844d8f4db812e69371db303, type: 2}
-  requiredStation: soup
+  requiredStation: mixing
