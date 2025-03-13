@@ -49,12 +49,19 @@ public class CustomerManager : MonoBehaviour
         {
             GameObject obj = req.requestObject;
             float timeLeft = TimePerRequest - (Time.time - req.startTime);
+            Image img = obj.transform.Find("Top").GetComponentInChildren<Image>();
+
+            if (timeLeft <= 10.0f)
+            {
+                img.color = Color.red;
+            }
+
             if(timeLeft <= 0)
             {
                 //Debug.Log("You Lose!");
             }
 
-            obj.transform.Find("Top").GetComponentInChildren<Image>().fillAmount =  timeLeft / TimePerRequest;
+            img.fillAmount =  timeLeft / TimePerRequest;
         }
     } 
 

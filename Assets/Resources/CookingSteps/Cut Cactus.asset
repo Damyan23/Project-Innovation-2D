@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
+  m_Name: Cut Cactus
+  m_EditorClassIdentifier: 
+  name: Cactus
+  inputIngredients:
+  - {fileID: 11400000, guid: 79270648a7640d140a3d83da69f75973, type: 2}
+  output: {fileID: 11400000, guid: 07e2822b6e507844785b801ec6e8ceec, type: 2}
+  requiredStation: cutting

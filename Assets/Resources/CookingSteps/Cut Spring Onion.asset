@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb660cdd1134447ae9c5d549ac68cf, type: 3}
+  m_Name: Cut Spring Onion
+  m_EditorClassIdentifier: 
+  name: Spring Onion
+  inputIngredients:
+  - {fileID: 11400000, guid: a60f1bc39a197c04d8e56d24bd7c1f72, type: 2}
+  output: {fileID: 11400000, guid: b535fc0595163e341a071a007b2f97b3, type: 2}
+  requiredStation: cutting
