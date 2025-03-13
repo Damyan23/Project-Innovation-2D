@@ -26,6 +26,8 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private TMP_Text levelTimer;
     [SerializeField] private GameObject gameOverScreen;
 
+    private int dishesCompleted = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +72,10 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator SendBackToMainMenu(float seconds)
     {
+        float score = Random.Range(750f, 1000f) * dishesCompleted;
+        Transform scoreObj = gameOverScreen.transform.Find("Score");
+        scoreObj.GetComponent<TMP_Text>().text = "Score: " + score.ToString();
+
         gameOverScreen.SetActive(true);
         yield return new WaitForSeconds(seconds);
 
@@ -137,10 +143,8 @@ public class CustomerManager : MonoBehaviour
         Destroy(requestToFill.requestObject);
         requests.Remove(requestToFill);
 
-        timeLeft += 20f;
-            
-        Debug.Log("Served A Correct Dish!");
-        
+        timeLeft += 35f;
+        dishesCompleted++;
     }
 
     public void FinishDish(string dishName)
