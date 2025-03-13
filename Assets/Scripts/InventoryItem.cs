@@ -7,9 +7,8 @@ using UnityEngine;
 public class InventoryItem : MonoBehaviour
 {
     // Start is called before the first frame update
-
-    public CookingManager manager;
-    public Ingredient ingredient;
+    [HideInInspector] public CookingManager manager;
+    [HideInInspector] public Ingredient ingredient;
 
     void Start()
     {

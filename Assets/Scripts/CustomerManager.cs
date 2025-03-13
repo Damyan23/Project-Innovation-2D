@@ -187,7 +187,6 @@ public class CustomerManager : MonoBehaviour
         // Get a random index
         int randomIndex = Random.Range(0, recipes.Count);
         Recipe randomRecipe = recipes[randomIndex];
-        Debug.Log("random recipe name: " + randomRecipe.output.name);
 
         // Create the request
         CustomerRequest newRequest = new(randomRecipe.output, Time.time, DisplayRecipe(randomRecipe));
