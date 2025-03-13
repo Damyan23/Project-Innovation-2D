@@ -63,27 +63,6 @@ public class CookingManager : MonoBehaviour
     void Update()
     {
         if (isCookingRecipe) return;
-
-        //Debug.Log (currentStation);
-
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    if (currentStation == "plating")
-        //    {
-        //        TryPlateDish();
-        //    }
-        //    else
-        //    {
-        //        TryProcessIngredient();
-        //    }
-        //}
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if(currentStation == "plating")
-            {
-                TryServePlate();
-            }
-        }
     }
 
     public void TryProcessIngredient()
@@ -99,30 +78,6 @@ public class CookingManager : MonoBehaviour
                 selectedIngredients[currentStation].Clear();
                 return;
             }
-        }
-    }
-
-    // public void TryPlateDish()
-    // {
-    //     Recipe[] recipes = Resources.LoadAll<Recipe>("Recipes");
-
-    //     foreach (Recipe recipe in recipes)
-    //     {
-    //         if (IsValidRecipe(selectedIngredients[currentStation], recipe))
-    //         {
-    //             StartCoroutine(recipe.StartMakingRecipe(this));
-    //             selectedIngredients[currentStation].Clear();
-    //             return;
-    //         }
-    //     }
-    // }
-    private void TryServePlate()
-    {
-        if (canServe && finishedDish != null)
-        {
-            canServe = false;
-            customerManager.FinishDish(finishedDish);
-            finishedDish = null;
         }
     }
 
@@ -168,17 +123,36 @@ public class CookingManager : MonoBehaviour
 
     public void AddIngredient(Ingredient ingredient)
     {
-        GameObject inventoryItem = Instantiate(inventoryItemPrefab, inventoryParent);
-        inventoryItem.GetComponent<Image>().sprite = ingredient.icon;
-        inventoryItem.GetComponent<InventoryItem>().ingredient = ingredient;
-        inventoryItem.GetComponent<InventoryItem>().manager = this;
+        // Instantiate the ingredient prefab
+        GameObject ingredientObject = Instantiate(inventoryItemPrefab, inventoryParent);
+        
+        // Get the Image component and set its sprite to the ingredient's icon
+        Image ingredientImage = ingredientObject.GetComponent<Image>();
+        if (ingredientImage != null)
+        {
+            ingredientImage.sprite = ingredient.icon;
+        }
 
-        Transform child = inventoryItem.transform.GetChild(0);
-        child.GetComponent<TMP_Text>().text = ingredient.name;
+        // Get the InventoryItem component and assign the ingredient + manager
+        InventoryItem inventoryItem = ingredientObject.GetComponent<InventoryItem>();
+        if (inventoryItem != null)
+        {
+            inventoryItem.ingredient = ingredient;
+            inventoryItem.manager = this;
+        }
 
-        inventoryItems.Add(inventoryItem);
+        // Get the TMP_Text component from the child and set its text
+        TMP_Text ingredientText = ingredientObject.transform.GetChild(0).GetComponent<TMP_Text>();
+        if (ingredientText != null)
+        {
+            ingredientText.text = ingredient.name;
+        }
+
+        // Add to inventory lists
+        inventoryItems.Add(ingredientObject);
         inventory.Add(ingredient);
     }
+
 
     public void AddIngredient(string ingredientName)
     {
