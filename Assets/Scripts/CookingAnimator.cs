@@ -1,83 +1,101 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class CookingAnimator : MonoBehaviour
 {
-    public List<GameObject> objects = new List<GameObject>();
+    [SerializeField] private List<Animator> animators; // List of all animators
+
+    private readonly string cookingTriggerName = "StartCooking";
+    private readonly string idleParameterName = "GoIdle";
+
+    private readonly string cookingAnimationName = "Cooking";  // Name of the cooking animation
+    private readonly string idleAnimationName = "Idle";        // Name of the idle animation
+
     private Animator activeAnimator;
-    private float lastTriggerTime;
-    private float stopTime;
+    private bool isIdleSet = false;
+    private bool shouldLoopCooking = false;
 
-    void OnEnable()
+    private void OnEnable()
     {
-        GameManager.instance.cookRecipeEvent += OnCookRecipe;
+        GameManager.instance.cookRecipeEvent += OnCookRecipeEvent;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        GameManager.instance.cookRecipeEvent -= OnCookRecipe;
+        GameManager.instance.cookRecipeEvent -= OnCookRecipeEvent;
     }
 
-    private void OnCookRecipe()
+    private void OnCookRecipeEvent()
     {
-        UpdateActiveObject();
 
-        // Get animation duration dynamically
-        float animationDuration = GetAnimationDuration("Cutting Animation");
+        if (string.IsNullOrEmpty(GameManager.instance.cookingOutputName) && string.IsNullOrEmpty (GameManager.instance.doneDishName)) return;
+        // Find the active animator (the one whose parent is active)
+        activeAnimator = GetActiveAnimator();
 
-        if (animationDuration > 0)
+        if (activeAnimator == null) return; // No active animator found, do nothing
+
+        AnimatorStateInfo currentState = activeAnimator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentState.IsName(cookingAnimationName) && currentState.normalizedTime < 1f)
         {
-            stopTime = animationDuration;
-            lastTriggerTime = Time.time; // Store when animation was last triggered
+            // If the event is triggered while cooking, mark that we should loop after the animation ends
+            shouldLoopCooking = true;
+        }
+        else
+        {
+            // If the animation is not running, start cooking normally
+            StartCooking();
+        }
+    }
 
-            if (activeAnimator != null)
+    private void StartCooking()
+    {
+        if (activeAnimator == null) return; // No active animator found, do nothing
+
+        activeAnimator.SetTrigger(cookingTriggerName);
+        isIdleSet = false;
+        shouldLoopCooking = false; // Reset loop flag when starting fresh
+    }
+
+    private void Update()
+    {
+        if (activeAnimator == null) return; // No active animator to update
+
+        AnimatorStateInfo currentState = activeAnimator.GetCurrentAnimatorStateInfo(0);
+
+        // When the cooking animation ends
+        if (currentState.IsName(cookingAnimationName) && currentState.normalizedTime >= 1f)
+        {
+            if (shouldLoopCooking)
             {
-                activeAnimator.SetTrigger("animate");
+                // Restart the animation if it was triggered mid-animation
+                activeAnimator.Play(cookingAnimationName, 0, 0f);
+                shouldLoopCooking = false; // Reset flag after looping
             }
-        }
-    }
-
-    private void UpdateActiveObject()
-    {
-        GameObject activeObject = objects[0].activeSelf ? objects[0] : objects[1].activeSelf ? objects[1] : null;
-
-        if (activeObject != null)
-        {
-            activeAnimator = activeObject.GetComponent<Animator>();
-
-            if (activeAnimator == null)
+            else if (!isIdleSet)
             {
-                Debug.LogWarning("CookingAnimator: Active object has no Animator component.");
-            }
-        }
-    }
-
-    void Update()
-    {
-        // Check if the animation should be stopped
-        if (activeAnimator != null && Time.time >= lastTriggerTime + stopTime)
-        {
-            activeAnimator.ResetTrigger("animate");
-        }
-    }
-
-    private float GetAnimationDuration(string animationName)
-    {
-        if (activeAnimator == null) return 0f;
-
-        RuntimeAnimatorController controller = activeAnimator.runtimeAnimatorController;
-        if (controller == null) return 0f;
-
-        foreach (AnimationClip clip in controller.animationClips)
-        {
-            if (clip.name == animationName)
-            {
-                return clip.length;
+                // If no loop is needed, go idle
+                activeAnimator.SetBool(idleParameterName, true);
+                isIdleSet = true;
             }
         }
 
-        Debug.LogWarning($"CookingAnimator: Animation '{animationName}' not found in Animator.");
-        return 0f;
+        // When transitioning to idle, reset GoIdle to false
+        if (currentState.IsName(idleAnimationName) && activeAnimator.GetBool(idleParameterName))
+        {
+            activeAnimator.SetBool(idleParameterName, false);
+        }
+    }
+
+    private Animator GetActiveAnimator()
+    {
+        foreach (Animator anim in animators)
+        {
+            if (anim.transform.parent != null && anim.transform.parent.gameObject.activeSelf)
+            {
+                return anim; // Return the first active animator found
+            }
+        }
+        return null; // No active animator found
     }
 }

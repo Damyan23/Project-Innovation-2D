@@ -122,8 +122,6 @@ public class CustomerManager : MonoBehaviour
     public void FinishDish(string dishName)
     {
         CustomerRequest requestToFill = null;
-        Debug.Log (requests.Count);
-
         foreach(CustomerRequest req in requests)
         {
             Debug.Log (req.wantedDish.name);
@@ -140,9 +138,11 @@ public class CustomerManager : MonoBehaviour
         //No correct request can be filled
         if (requestToFill == null)
         {
-            Debug.LogWarning("Wrong Dish!");
+            GameManager.instance.popupTextManager.ShowIncorrectDishSentToCustomer ();
             return;
         }
+
+        GameManager.instance.popupTextManager.ShowCorrectDishSentToCustomer ();
 
         Destroy(requestToFill.requestObject);
         requests.Remove(requestToFill);

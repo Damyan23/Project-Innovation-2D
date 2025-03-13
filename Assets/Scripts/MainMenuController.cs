@@ -2,47 +2,76 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System.Net;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using Mirror.Discovery;
 
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject networkMenu;
-    public void GoToNetworkMenu ()
+    [SerializeField] private NetworkDiscovery networkDiscovery;
+    private Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
+    
+    private void Start()
     {
-        mainMenu.SetActive (false);
-        networkMenu.SetActive (true);
+        networkDiscovery.OnServerFound.AddListener(OnDiscoveredServer);
+    }
+
+    public void GoToNetworkMenu()
+    {
+        mainMenu.SetActive(false);
+        networkMenu.SetActive(true);
     }
 
     public void StartHost()
     {
-        Debug.Log("🖥️ Starting Host...");
+        Debug.Log("Starting host...");
+        discoveredServers.Clear ();
         NetworkManager.singleton.StartHost();
+        networkDiscovery.AdvertiseServer();
     }
-
-    // For when we start using IP adresses
-        // void JoinServer()
-        // {
-        //     string ipAddress = ipInputField.text.Trim();
-        //     if (string.IsNullOrEmpty(ipAddress))
-        //     {
-        //         Debug.LogError("❌ Please enter a valid IP address!");
-        //         return;
-        //     }
-
-        //     Debug.Log($"📱 Connecting to server at: {ipAddress}");
-        //     NetworkManager.singleton.networkAddress = ipAddress;
-        //     NetworkManager.singleton.StartClient();
-        // }
 
     public void JoinServer()
     {
-        // Debug.Log($"📱 Connecting to server at: {}");
-        NetworkManager.singleton.networkAddress = GetIp();
-        NetworkManager.singleton.StartClient();
+        discoveredServers.Clear();
+        networkDiscovery.StartDiscovery();
+        StartCoroutine(TryJoinServer());
     }
 
-    private string GetIp()
+    private IEnumerator TryJoinServer()
     {
-        return "localHost"; 
+        float timeout = 10f; // Wait for servers to be discovered
+        float timer = 0f;
+
+        while (discoveredServers.Count == 0 && timer < timeout)
+        {
+            yield return new WaitForSeconds(1f);
+            timer += 1f;
+        }
+
+        if (discoveredServers.Count > 0)
+        {
+            foreach (ServerResponse info in discoveredServers.Values)
+            {
+                Debug.Log("Trying to connect to: " + info.EndPoint.Address);
+                NetworkManager.singleton.networkAddress = info.EndPoint.Address.ToString();
+                NetworkManager.singleton.StartClient();
+                yield break; // Stop after first successful attempt
+            }
+        }
+        else
+        {
+            Debug.LogError("No servers found.");
+        }
+    }
+
+    public void OnDiscoveredServer(ServerResponse info)
+    {
+        if (!discoveredServers.ContainsKey(info.serverId))
+        {
+            discoveredServers[info.serverId] = info;
+        }
     }
 }

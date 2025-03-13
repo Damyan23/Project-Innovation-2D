@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class GameManager : NetworkBehaviour
 {
     public static GameManager instance;
-    public bool playerStartedGame = false;
+    public bool playerStartedGame = true;
     [HideInInspector] public RecipeDataBase dataBase;
     [HideInInspector] public EventManager eventManager;
 
@@ -45,7 +45,8 @@ public class GameManager : NetworkBehaviour
     private bool isSendingToInventory = false; // Flag to prevent multiple calls
 
     [HideInInspector] public CustomerManager customerManager;
-    private string doneDishName;
+    [HideInInspector] public PopupTextManager popupTextManager;
+    [HideInInspector] public string doneDishName;
     private void Awake()
     {
         if (instance == null)
@@ -71,6 +72,7 @@ public class GameManager : NetworkBehaviour
         eventManager = GetComponent<EventManager>();
         cookingManager = GetComponent<CookingManager>();
         customerManager = GetComponent <CustomerManager> ();
+        popupTextManager = GetComponent <PopupTextManager> ();
 
         if (eventManager != null)
         {
@@ -157,11 +159,6 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
-        //Debug.Log(isCookingRecipe);
-        if (spawnedIngredient != null && isCookingRecipe)
-        {
-            isCookingRecipe = false;
-        }
     } 
 
     void CookRecipe()
@@ -184,9 +181,9 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            customerManager.FinishDish (doneDishName);
-            Destroy (instantiatedIngredients[doneDishName]);
-            doneDishName = "";
+            // customerManager.FinishDish (doneDishName);
+            // Destroy (instantiatedIngredients[doneDishName]);
+            // doneDishName = "";
         }
     }
 
@@ -278,11 +275,10 @@ public class GameManager : NetworkBehaviour
 
         yield return new WaitForSeconds(delay);
 
-        Debug.Log(cookingOutputName);
+        popupTextManager.ShowIngredientSentToInventory();
 
         if (!string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.ContainsKey(cookingOutputName))
         {
-            Debug.Log("Ingredient contained in dictionary");
             FindLocalPlayer().GetComponent<NetworkEventManager>().SendIngredientToInventory(cookingOutputName);
             Destroy(instantiatedIngredients[cookingOutputName]); // Fixed ingredientName reference
             instantiatedIngredients.Clear();

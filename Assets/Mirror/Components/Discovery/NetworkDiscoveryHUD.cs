@@ -44,40 +44,21 @@ namespace Mirror.Discovery
             GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Find Servers"))
-            {
-                discoveredServers.Clear();
-                networkDiscovery.StartDiscovery();
-            }
+                StartDiscovery();
 
-            // LAN Host
             if (GUILayout.Button("Start Host"))
-            {
-                discoveredServers.Clear();
-                NetworkManager.singleton.StartHost();
-                networkDiscovery.AdvertiseServer();
-            }
+                StartHost();
 
-            // Dedicated server
             if (GUILayout.Button("Start Server"))
-            {
-                discoveredServers.Clear();
-                NetworkManager.singleton.StartServer();
-                networkDiscovery.AdvertiseServer();
-            }
+                StartServer();
 
             GUILayout.EndHorizontal();
-
-            // show list of found server
-
             GUILayout.Label($"Discovered Servers [{discoveredServers.Count}]:");
 
-            // servers
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
-
             foreach (ServerResponse info in discoveredServers.Values)
                 if (GUILayout.Button(info.EndPoint.Address.ToString()))
                     Connect(info);
-
             GUILayout.EndScrollView();
             GUILayout.EndArea();
         }
@@ -86,38 +67,64 @@ namespace Mirror.Discovery
         {
             GUILayout.BeginArea(new Rect(10, 40, 100, 25));
 
-            // stop host if host mode
             if (NetworkServer.active && NetworkClient.isConnected)
             {
                 if (GUILayout.Button("Stop Host"))
-                {
-                    NetworkManager.singleton.StopHost();
-                    networkDiscovery.StopDiscovery();
-                }
+                    StopHost();
             }
-            // stop client if client-only
             else if (NetworkClient.isConnected)
             {
                 if (GUILayout.Button("Stop Client"))
-                {
-                    NetworkManager.singleton.StopClient();
-                    networkDiscovery.StopDiscovery();
-                }
+                    StopClient();
             }
-            // stop server if server-only
             else if (NetworkServer.active)
             {
                 if (GUILayout.Button("Stop Server"))
-                {
-                    NetworkManager.singleton.StopServer();
-                    networkDiscovery.StopDiscovery();
-                }
+                    StopServer();
             }
 
             GUILayout.EndArea();
         }
 
-        void Connect(ServerResponse info)
+        public void StartDiscovery()
+        {
+            discoveredServers.Clear();
+            networkDiscovery.StartDiscovery();
+        }
+
+        public void StartHost()
+        {
+            discoveredServers.Clear();
+            NetworkManager.singleton.StartHost();
+            networkDiscovery.AdvertiseServer();
+        }
+
+        public void StartServer()
+        {
+            discoveredServers.Clear();
+            NetworkManager.singleton.StartServer();
+            networkDiscovery.AdvertiseServer();
+        }
+
+        public void StopHost()
+        {
+            NetworkManager.singleton.StopHost();
+            networkDiscovery.StopDiscovery();
+        }
+
+        public void StopClient()
+        {
+            NetworkManager.singleton.StopClient();
+            networkDiscovery.StopDiscovery();
+        }
+
+        public void StopServer()
+        {
+            NetworkManager.singleton.StopServer();
+            networkDiscovery.StopDiscovery();
+        }
+
+        public void Connect(ServerResponse info)
         {
             networkDiscovery.StopDiscovery();
             NetworkManager.singleton.StartClient(info.uri);
@@ -125,7 +132,6 @@ namespace Mirror.Discovery
 
         public void OnDiscoveredServer(ServerResponse info)
         {
-            // Note that you can check the versioning to decide if you can connect to the server or not using this method
             discoveredServers[info.serverId] = info;
         }
     }
