@@ -37,6 +37,8 @@ public class CookingManager : MonoBehaviour
     
     private Ingredient[] ingredients;
 
+    [SerializeField] private Ingredient dirtSoup;
+
     void Start()
     {
         customerManager = GetComponent<CustomerManager>();
@@ -278,10 +280,13 @@ public class CookingManager : MonoBehaviour
                 if (areEqual)
                 {
                     CmdSetOutputStepName(step.output.name);
+                    return;
                     //Debug.Log ("are equal");
                 }
             }
         }
+
+        CmdSetOutputStepName("Dirt Soup");
     }
 
     void CmdSetOutputStepName(string stepOutputName)

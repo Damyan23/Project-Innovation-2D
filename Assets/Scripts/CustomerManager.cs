@@ -1,5 +1,7 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -20,11 +22,11 @@ public class CustomerManager : MonoBehaviour
     private bool waitingForCustomer;
     private const float TimePerRequest = 45f;
     private float timeLeft;
-    
+
     [SerializeField] private TMP_Text levelTimer;
     [SerializeField] private GameObject gameOverScreen;
 
-    private int dishesCompleted = 0;
+    float score = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -39,16 +41,16 @@ public class CustomerManager : MonoBehaviour
     void Update()
     {
         timeLeft -= Time.deltaTime;
-        if(timeLeft <= 0)
+        if (timeLeft <= 0)
         {
             StartCoroutine(SendBackToMainMenu(7.5f));
         }
 
         levelTimer.text = Mathf.RoundToInt(timeLeft).ToString();
 
-        AddRandomRecipe ();
+        AddRandomRecipe();
 
-        foreach(CustomerRequest req in requests)
+        foreach (CustomerRequest req in requests)
         {
             GameObject obj = req.requestObject;
             float timeLeft = TimePerRequest - (Time.time - req.startTime);
@@ -59,18 +61,17 @@ public class CustomerManager : MonoBehaviour
                 img.color = Color.red;
             }
 
-            if(timeLeft <= 0)
+            if (timeLeft <= 0)
             {
                 StartCoroutine(SendBackToMainMenu(7.5f));
             }
 
-            img.fillAmount =  timeLeft / TimePerRequest;
+            img.fillAmount = timeLeft / TimePerRequest;
         }
-    } 
+    }
 
     private IEnumerator SendBackToMainMenu(float seconds)
     {
-        float score = Random.Range(750f, 1000f) * dishesCompleted;
         Transform scoreObj = gameOverScreen.transform.Find("Score");
         scoreObj.GetComponent<TMP_Text>().text = "Score: " + score.ToString();
 
@@ -109,7 +110,7 @@ public class CustomerManager : MonoBehaviour
         Transform topPart = recipeObject.transform.Find("Top");
         TMP_Text recipeName = topPart.GetComponentInChildren<TMP_Text>();
         recipeName.text = recipe.name;
-        
+
         Image timerImage = topPart.GetComponentInChildren<Image>();
         timerImage.fillAmount = 1f;
 
@@ -122,12 +123,12 @@ public class CustomerManager : MonoBehaviour
     {
         CustomerRequest requestToFill = null;
 
-        foreach(CustomerRequest req in requests)
+        foreach (CustomerRequest req in requests)
         {
-            if(req.wantedDish.name == dish.ingredient.name)
+            if (req.wantedDish.name == dish.ingredient.name)
             {
                 //Serve the oldest request first
-                if(requestToFill == null || req.startTime < requestToFill.startTime)
+                if (requestToFill == null || req.startTime < requestToFill.startTime)
                 {
                     requestToFill = req;
                 }
@@ -137,27 +138,31 @@ public class CustomerManager : MonoBehaviour
         //No correct request can be filled
         if (requestToFill == null)
         {
+            score -= 500f;
             Debug.LogWarning("Wrong Dish!");
             return;
         }
+
+        //Faster time => bigger score (exponentially)
+        float timeLeft = Time.time - requestToFill.startTime;
+        score += timeLeft * timeLeft;
 
         Destroy(requestToFill.requestObject);
         requests.Remove(requestToFill);
 
         timeLeft += 35f;
-        dishesCompleted++;
     }
 
     public void FinishDish(string dishName)
     {
         CustomerRequest requestToFill = null;
-        foreach(CustomerRequest req in requests)
+        foreach (CustomerRequest req in requests)
         {
-            Debug.Log (req.wantedDish.name);
-            if(req.wantedDish.name == dishName)
+            Debug.Log(req.wantedDish.name);
+            if (req.wantedDish.name == dishName)
             {
                 //Serve the oldest request first
-                if(requestToFill == null || req.startTime < requestToFill.startTime)
+                if (requestToFill == null || req.startTime < requestToFill.startTime)
                 {
                     requestToFill = req;
                 }
@@ -167,19 +172,19 @@ public class CustomerManager : MonoBehaviour
         //No correct request can be filled
         if (requestToFill == null)
         {
-            GameManager.instance.popupTextManager.ShowIncorrectDishSentToCustomer ();
+            GameManager.instance.popupTextManager.ShowIncorrectDishSentToCustomer();
             return;
         }
 
-        GameManager.instance.popupTextManager.ShowCorrectDishSentToCustomer ();
+        GameManager.instance.popupTextManager.ShowCorrectDishSentToCustomer();
 
         Destroy(requestToFill.requestObject);
         requests.Remove(requestToFill);
 
         timeLeft += 20f;
-            
+
         Debug.Log("Served A Correct Dish!");
-        
+
     }
 
     private IEnumerator AddNewRequest(int waitingTimeSeconds)
