@@ -20,7 +20,7 @@ public class CustomerManager : MonoBehaviour
 
 
     private bool waitingForCustomer;
-    private const float TimePerRequest = 45f;
+    private const float TimePerRequest = 60f;
     private float timeLeft;
 
     [SerializeField] private TMP_Text levelTimer;
@@ -40,6 +40,8 @@ public class CustomerManager : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.instance.playerStartedGame) return;
+
         timeLeft -= Time.deltaTime;
         if (timeLeft <= 0)
         {

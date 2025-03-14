@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Mirror;
 
 public class CookingAnimator : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class CookingAnimator : MonoBehaviour
     private bool isIdleSet = false;
     private bool shouldLoopCooking = false;
 
-    private void OnEnable()
+    public GameObject knife;
+    private void Start()
     {
         GameManager.instance.cookRecipeEvent += OnCookRecipeEvent;
     }
@@ -24,12 +26,10 @@ public class CookingAnimator : MonoBehaviour
     {
         GameManager.instance.cookRecipeEvent -= OnCookRecipeEvent;
     }
-
     private void OnCookRecipeEvent()
     {
         // Find the active animator (the one whose parent is active)
         activeAnimator = GetActiveAnimator();
-
         if (activeAnimator == null) return; // No active animator found, do nothing
 
         AnimatorStateInfo currentState = activeAnimator.GetCurrentAnimatorStateInfo(0);

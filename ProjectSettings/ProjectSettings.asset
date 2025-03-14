@@ -163,6 +163,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.DefaultCompany.ProjectInnovation2D
+    Standalone: com.DefaultCompany.Project-Innovation-2D
   buildNumber:
     Standalone: 0
     VisionOS: 0

@@ -2,12 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
-using Mirror.BouncyCastle.Asn1.BC;
-using Mirror.BouncyCastle.Security;
-using Unity.VisualScripting;
-using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -58,6 +53,8 @@ public class GameManager : NetworkBehaviour
     bool seenTutorial;
 
     [SerializeField] private GameObject waterPot;
+
+    [SerializeField] private GameObject ui;
 
     private void Awake()
     {
@@ -212,13 +209,13 @@ public class GameManager : NetworkBehaviour
         if(!seenTutorial && playerStartedGame)
         {
             Destroy(tutorialSprite);
+            if (ui != null) ui.SetActive (true);
             seenTutorial = true;
         }
     } 
 
     void CookRecipe()
     {
-
         if (currentStation != "plating")
         {
             if (isCookingRecipe && string.IsNullOrEmpty(cookingOutputName) && instantiatedIngredients.Count > 0)
