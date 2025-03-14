@@ -157,13 +157,13 @@ public class CustomerManager : MonoBehaviour
 
     public void FinishDish(string dishName)
     {
+        //Loop through all requests
         CustomerRequest requestToFill = null;
         foreach (CustomerRequest req in requests)
         {
-            Debug.Log(req.wantedDish.name);
             if (req.wantedDish.name == dishName)
             {
-                //Serve the oldest request first
+                //Serve the oldest request first in case of duplicates
                 if (requestToFill == null || req.startTime < requestToFill.startTime)
                 {
                     requestToFill = req;
@@ -171,22 +171,19 @@ public class CustomerManager : MonoBehaviour
             }
         }
 
-        //No correct request can be filled
-        if (requestToFill == null)
+        //Serve the dish
+        if (requestToFill != null)
         {
-            GameManager.instance.popupTextManager.ShowIncorrectDishSentToCustomer();
-            return;
+            GameManager.instance.popupTextManager.ShowCorrectDishSentToCustomer();
+
+            Destroy(requestToFill.requestObject);
+            requests.Remove(requestToFill);
+
+            timeLeft += 45f;
         }
 
-        GameManager.instance.popupTextManager.ShowCorrectDishSentToCustomer();
-
-        Destroy(requestToFill.requestObject);
-        requests.Remove(requestToFill);
-
-        timeLeft += 20f;
-
-        Debug.Log("Served A Correct Dish!");
-
+        //No correct dish found
+        GameManager.instance.popupTextManager.ShowIncorrectDishSentToCustomer();
     }
 
     private IEnumerator AddNewRequest(int waitingTimeSeconds)
