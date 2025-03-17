@@ -269,7 +269,7 @@ public class GameManager : NetworkBehaviour
 
         soundManager.PlayTrashing();
 
-        //cookingManager.selectedIngredients[currentStation].Clear();
+        cookingManager.selectedIngredients[currentStation].Clear();
     }
 
     void ToggleWaterPot(string station)
