@@ -211,6 +211,7 @@ public class CookingManager : MonoBehaviour
 
     public void SelectInventoryItem(InventoryItem item)
     {
+        if (!GameManager.instance.playerStartedGame) return;
         if (isCookingRecipe) return;
         if (currentStation == "cutting" && selectedIngredients["cutting"].Count >= 1) return;
 

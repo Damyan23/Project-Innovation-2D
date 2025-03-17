@@ -117,6 +117,8 @@ public class GameManager : NetworkBehaviour
 
     public void InstantiateIngredientById(List<string> ingredientNames)
     {
+        if (!playerStartedGame) return;
+
         // Find the active "Placement UI" object
         GameObject placementUI = GameObject.Find("Placement UI");
 
